@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "./typography.css";
+@import "./components/input.css";
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.center-content {
+  @apply grid place-items-center;
+}
+
+.responsive-wrapper {
+  @apply mx-auto max-w-screen-xl w-full px-6;
+}
+
+.mobile-hidden {
+  @apply hidden lg:block;
+}
+
+.desktop-hidden {
+  @apply lg:hidden;
+}

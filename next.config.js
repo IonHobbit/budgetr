@@ -4,7 +4,8 @@ const nextConfig = {
   images: {
     domains: [
       "firebasestorage.googleapis.com",
-      "wakanda-business.appspot.com",
+      "nigerianbanks.xyz",
+      "nigerialogos.com",
     ],
   },
 }

@@ -1,0 +1,94 @@
+.primaryWrapper {
+  position: relative;
+  width: 100%;
+  --accent-color: #00a85a;
+  --error-color: #ff0000;
+}
+
+.primaryWrapper:before {
+  transition: border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.42);
+}
+
+.primaryWrapper:before,
+.primaryWrapper:after {
+  content: "";
+  left: 0;
+  right: 0;
+  position: absolute;
+  pointer-events: none;
+  bottom: -1px;
+  z-index: 4;
+  width: 100%;
+}
+
+.primaryWrapper:focus-within:before {
+  border-bottom: 2px solid var(--accent-color);
+}
+
+.primaryWrapper:before {
+  transition: border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.32);
+}
+
+.primaryWrapper.errored:before {
+  border-bottom: 2px solid var(--error-color) !important;
+  transform: scaleX(1);
+}
+
+.primaryWrapper.errored:after {
+  border-bottom: 2px solid var(--error-color) !important;
+  transform: scaleX(1);
+}
+
+.primaryWrapper:focus-within:before {
+  border-bottom: 2px solid var(--accent-color);
+  transform: scaleX(1);
+}
+
+.primaryWrapper:focus-within:after {
+  border-bottom: 2px solid var(--accent-color);
+  transform: scaleX(1);
+}
+
+.primaryWrapper:after {
+  content: "";
+  transform: scaleX(0);
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+  will-change: transform;
+  border-bottom: 2px solid var(--accent-color);
+  border-bottom-color: var(--accent-color);
+}
+
+.primary::placeholder {
+  transition: opacity 250ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+  opacity: 1;
+  user-select: none;
+}
+
+.primaryWrapper .primary {
+  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition-duration: 200ms;
+  transition-property: background-color;
+  font-size: 14px;
+  padding: 12px;
+  padding-left: 12px;
+  width: 100%;
+  border-left: none;
+  border-bottom: none;
+  border-right: none;
+}
+
+.primaryWrapper .primary:focus,
+.primaryWrapper .primary:active,
+.PhoneInput {
+  outline: none !important;
+}
+
+.primaryWrapper:focus-within .primary::placeholder {
+  opacity: 0;
+}
+
+.secondary {
+  @apply bg-white py-2 px-3 mt-1.5 w-full rounded border border-primary outline-none disabled:bg-gray-500 disabled:border-gray-800;
+}
