@@ -2,10 +2,13 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import Button from "@/components/Button";
+import { useRouter } from "next/router";
 
 const YVYRandomizerPage = () => {
   const [numbers, setNumbers] = useState({ one: 1, two: 1 });
   const [isAnimating, setIsAnimating] = useState(false);
+
+  const router = useRouter();
 
   const randomize = async () => {
     const one = Math.random() * 6;
@@ -21,9 +24,13 @@ const YVYRandomizerPage = () => {
     setNumbers({ one, two: 0 });
   };
 
+  useEffect(() => {
+    router.push("/");
+  }, []);
+
   return (
     <div className="max-w-5xl px-6 mx-auto h-screen pt-10 pb-6">
-      <div className="grid place-items-center h-full">
+      <div className="place-items-center h-full hidden">
         <div className="flex flex-col items-center w-full max-w-xs">
           <div className="w-40 h-20 relative">
             <Image

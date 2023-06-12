@@ -1,33 +1,24 @@
-import Link from "next/link";
-import { NextPage } from "next";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/store/rootReducer";
-import { selectUser, setUser } from "@/store/slices/userSlice";
-
-import Header from "@/components/Header";
 import { Icon } from "@iconify/react";
-
-import { Route, dashboardRoutes } from "@/constants/routes";
-import useLayout from "@/hooks/useLayout";
-import DashboardLayout from "@/layouts/DashboardLayout";
+import React, { useMemo } from "react";
+import { useSelector } from "react-redux";
 import { NextPageWithLayout } from "./_app";
-import { selectAccounts } from "@/store/slices/accountsSlice";
-import React, { useEffect, useMemo } from "react";
-import { Account } from "@/models/account";
-import { AnyAction } from "redux";
-import { Transaction, TransactionType } from "@/models/transaction";
-import helperUtil from "@/utils/helper.util";
-import Table from "@/components/Table";
+import { RootState } from "@/store/rootReducer";
+import { selectUser } from "@/store/slices/userSlice";
+
 import useMeta from "@/hooks/useMeta";
-import {
-  selectCategories,
-  selectExpenseCategories,
-} from "@/store/slices/categoriesSlice";
-import { Category } from "@/models/category";
+import useLayout from "@/hooks/useLayout";
+
+import DashboardLayout from "@/layouts/DashboardLayout";
+import { selectAccounts } from "@/store/slices/accountsSlice";
 import { selectBudgets } from "@/store/slices/budgetsSlice";
-import { Budget, IBudgetItem } from "@/models/budget";
-import PieChart from "@/components/charts/PieChart";
+import helperUtil from "@/utils/helper.util";
+
+import Table from "@/components/Table";
 import EmptyState from "@/components/EmptyState";
+
+import { Account } from "@/models/account";
+import { Budget, IBudgetItem } from "@/models/budget";
+import { Transaction, TransactionType } from "@/models/transaction";
 
 const DashboardPage: NextPageWithLayout = () => {
   const user = useSelector((state: RootState) => selectUser(state));

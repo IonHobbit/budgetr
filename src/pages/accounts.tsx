@@ -1,17 +1,19 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/rootReducer";
+import { NextPageWithLayout } from "./_app";
 
 import useLayout from "@/hooks/useLayout";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { NextPageWithLayout } from "./_app";
 import { selectAccounts } from "@/store/slices/accountsSlice";
+
 import { Account } from "@/models/account";
-import ResizedImage from "@/components/ResizedImage";
 import helperUtil from "@/utils/helper.util";
+
 import Button from "@/components/Button";
+import EmptyState from "@/components/EmptyState";
+import ResizedImage from "@/components/ResizedImage";
 import { useModal } from "@/components/ModalManager";
 import AccountModal from "@/components/modals/AccountModal";
-import EmptyState from "@/components/EmptyState";
 
 const AccountsPage: NextPageWithLayout = () => {
   const accounts = useSelector((state: RootState) => selectAccounts(state));

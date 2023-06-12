@@ -2,17 +2,16 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/router";
 
+import { setUser } from "@/store/slices/userSlice";
+
+import useDispatcher from "@/hooks/useDispatcher";
+
+import { fetchUser, register } from "./api/user.api";
+
 import Button from "@/components/Button";
-import Input from "@/components/Input";
 
 import notification from "@/utils/notification";
-
-import { GENERIC_ERROR } from "@/constants/errorMessages";
-
 import { FirebaseUser, loginWithGooglePopup } from "@/utils/firebase.util";
-import { fetchUser, register } from "./api/user.api";
-import useDispatcher from "@/hooks/useDispatcher";
-import { setUser } from "@/store/slices/userSlice";
 import { User } from "@/models/user";
 
 const LoginPage = () => {

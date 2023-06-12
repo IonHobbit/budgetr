@@ -1,4 +1,4 @@
-import React, { ComponentType, ReactElement } from "react";
+import React, { ReactElement } from "react";
 import { LayoutProps } from "@/layouts/DashboardLayout";
 import { NextPageWithLayout } from "@/pages/_app";
 import BaseLayout from "@/layouts/BaseLayout";

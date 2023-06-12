@@ -1,20 +1,24 @@
 import Head from "next/head";
-import { ReactNode, useEffect, useMemo } from "react";
-import Header from "@/components/Header";
-import Navigation from "@/components/Navigation";
-import routes from "@/constants/routes";
-import useNetwork from "@/hooks/useNetwork";
 import { Icon } from "@iconify/react";
-import { useModal } from "@/components/ModalManager";
-import TransactionModal from "@/components/modals/TransactionModal";
+import { useSelector } from "react-redux";
+import { ReactNode, useEffect, useMemo } from "react";
+
+import { RootState } from "@/store/rootReducer";
+import { selectUser } from "@/store/slices/userSlice";
 import { fetchBudgets } from "@/store/slices/budgetsSlice";
 import { fetchAccounts } from "@/store/slices/accountsSlice";
 import { fetchCategories } from "@/store/slices/categoriesSlice";
-import CategoryModal from "@/components/modals/CategoryModal";
+
+import useNetwork from "@/hooks/useNetwork";
 import useDispatcher from "@/hooks/useDispatcher";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/rootReducer";
-import { selectUser } from "@/store/slices/userSlice";
+
+import Header from "@/components/Header";
+import Navigation from "@/components/Navigation";
+import { useModal } from "@/components/ModalManager";
+import CategoryModal from "@/components/modals/CategoryModal";
+import TransactionModal from "@/components/modals/TransactionModal";
+
+import routes from "@/constants/routes";
 
 export interface LayoutProps {
   children: ReactNode;
@@ -32,8 +36,10 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children, pageName }) => {
   const { isOffline } = useNetwork();
 
   useEffect(() => {
-    dispatcher(fetchBudgets(user!.id));
-    dispatcher(fetchAccounts(user!.id));
+    if (user) {
+      dispatcher(fetchBudgets(user!.id));
+      dispatcher(fetchAccounts(user!.id));
+    }
     dispatcher(fetchCategories());
   }, [user]);
 

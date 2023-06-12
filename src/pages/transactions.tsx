@@ -1,19 +1,22 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { NextPageWithLayout } from "./_app";
 import { RootState } from "@/store/rootReducer";
 
 import useLayout from "@/hooks/useLayout";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { NextPageWithLayout } from "./_app";
 import { selectAccounts } from "@/store/slices/accountsSlice";
-import { useEffect, useMemo, useState } from "react";
-import { Account } from "@/models/account";
-import { Transaction, TransactionType } from "@/models/transaction";
-import Table from "@/components/Table";
-import { TRANSACTION_TYPES } from "@/constants/constants";
+
 import helperUtil from "@/utils/helper.util";
+import { TRANSACTION_TYPES } from "@/constants/constants";
+
+import Table from "@/components/Table";
 import EmptyState from "@/components/EmptyState";
 import { useModal } from "@/components/ModalManager";
 import TransactionModal from "@/components/modals/TransactionModal";
+
+import { Account } from "@/models/account";
+import { Transaction, TransactionType } from "@/models/transaction";
 
 const TransactionsPage: NextPageWithLayout = () => {
   const accounts = useSelector((state: RootState) => selectAccounts(state));
@@ -90,30 +93,28 @@ const TransactionsPage: NextPageWithLayout = () => {
                 <div className="space-y-3">
                   <p className="text-sm">Filter by Account</p>
                   <div className="flex items-center w-full space-x-2 lg:block lg:space-y-3 lg:space-x-0">
-                    {accounts.map(
-                      (account: Account) => {
-                        return (
-                          <div
-                            key={account.id}
-                            onClick={() => toggleAccount(account.id)}
-                            className={`px-4 py-2 rounded  capitalize cursor-pointer whitespace-nowrap overflow-hidden truncate hover:text-white ${
-                              selectedAccounts.includes(account.id)
-                                ? "text-white"
-                                : "bg-secondary text-text"
-                            }`}
-                            style={{
-                              backgroundColor: selectedAccounts.includes(
-                                account.id
-                              )
-                                ? account.colorCode
-                                : "",
-                            }}
-                          >
-                            {account.name}
-                          </div>
-                        );
-                      }
-                    )}
+                    {accounts.map((account: Account) => {
+                      return (
+                        <div
+                          key={account.id}
+                          onClick={() => toggleAccount(account.id)}
+                          className={`px-4 py-2 rounded  capitalize cursor-pointer whitespace-nowrap overflow-hidden truncate hover:text-white ${
+                            selectedAccounts.includes(account.id)
+                              ? "text-white"
+                              : "bg-secondary text-text"
+                          }`}
+                          style={{
+                            backgroundColor: selectedAccounts.includes(
+                              account.id
+                            )
+                              ? account.colorCode
+                              : "",
+                          }}
+                        >
+                          {account.name}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}

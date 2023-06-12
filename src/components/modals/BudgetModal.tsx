@@ -185,8 +185,11 @@ const BudgetModal: React.FC<BudgetModalProps> = ({ budget }) => {
   });
 
   useEffect(() => {
-    dispatcher(fetchBudgets(user!.id));
+    if (user) {
+      dispatcher(fetchBudgets(user.id));
+    }
     dispatcher(fetchCategories());
+
     if (budget) {
       budgetForm.setFieldValue("title", budget.title);
       budgetForm.setFieldValue("startDate", budget.startDate);

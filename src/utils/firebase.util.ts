@@ -1,11 +1,5 @@
-import { auth, firestore, googleProvider, storage } from "@/config/firebase";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { auth, firestore, googleProvider } from "@/config/firebase";
 import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
-import { randomUUID } from "crypto";
-
-import notification from "./notification";
-
-import { ALLOWED_FILE_TYPES } from "@/constants/constants";
 import { AnyAction, Dispatch } from "redux";
 import { AdditionalUserInfo, GoogleAuthProvider, User, getAdditionalUserInfo, signInWithPopup } from "firebase/auth";
 
@@ -116,20 +110,3 @@ export const subscribeToFirestoreDocument = (collectionName: string, dispatcher:
     }
   })
 }
-
-// export const uploadFileToStorage = async (file: File, directory: DirectoryPath): Promise<WakandaFile | void> => {
-//   const _file = new WakandaFile(file);
-//   if (!ALLOWED_FILE_TYPES.includes(_file.type)) {
-//     return notification.error('Invalid file type');
-//   }
-//   try {
-//     const filePath = `${directory}/${randomUUID()}.${file.name.split(".")[1]}`;
-//     const fileRef = ref(storage, filePath);
-//     await uploadBytes(fileRef, file);
-
-//     _file.url = await getDownloadURL(fileRef);
-//     return _file;
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }

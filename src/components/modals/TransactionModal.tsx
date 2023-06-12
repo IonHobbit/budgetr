@@ -113,11 +113,14 @@ const TransactionModal: React.FC = () => {
   }, [transactionForm.values.type, categories]);
 
   useEffect(() => {
-    dispatcher(fetchAccounts(user!.id));
+    if (user) {
+      dispatcher(fetchAccounts(user!.id));
+    }
+    
     dispatcher(fetchCategories());
     transactionForm.setFieldValue("category", categoryOptions[0].key);
     setAccount(accounts[0]);
-  }, []);
+  }, [user]);
 
   return (
     <Modal size="x-small" spacing={true}>

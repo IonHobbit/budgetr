@@ -2,17 +2,12 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
+import useAuth from "@/hooks/useAuth";
+
 import Button from "@/components/Button";
-import Input from "@/components/Input";
-
-import notification from "@/utils/notification";
-
-import { GENERIC_ERROR } from "@/constants/errorMessages";
+import OTPInput from "@/components/OTPInput";
 
 import storageUtil, { StorageKey } from "@/utils/storage.util";
-import OTPInput from "@/components/OTPInput";
-import { decryptData, encryptData } from "@/utils/encryption.util";
-import useAuth from "@/hooks/useAuth";
 
 const LoginPage = () => {
   const [passCode, setPassCode] = useState("");

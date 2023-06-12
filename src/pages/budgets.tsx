@@ -1,15 +1,16 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/rootReducer";
+import { NextPageWithLayout } from "./_app";
 
 import useLayout from "@/hooks/useLayout";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { NextPageWithLayout } from "./_app";
-import Table from "@/components/Table";
 import { selectBudgets } from "@/store/slices/budgetsSlice";
-import { useModal } from "@/components/ModalManager";
-import BudgetModal from "@/components/modals/BudgetModal";
+
+import Table from "@/components/Table";
 import Button from "@/components/Button";
 import EmptyState from "@/components/EmptyState";
+import { useModal } from "@/components/ModalManager";
+import BudgetModal from "@/components/modals/BudgetModal";
 
 const BudgetsPage: NextPageWithLayout = () => {
   const budgets = useSelector((state: RootState) => selectBudgets(state));
