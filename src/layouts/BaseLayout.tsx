@@ -22,7 +22,7 @@ const BaseLayout: React.FC<LayoutProps> = ({ children, pageName }) => {
         <meta property="og:title" content={pageTitle} key="title" />
       </Head>
       <main
-        className={`bg-background min-h-screen w-screen overflow-x-hidden ${
+        className={`bg-background min-h-screen w-screen overflow-x-hidden bg-main-bg ${
           isOffline && "border-2 border-error overflow-hidden"
         }`}
       >

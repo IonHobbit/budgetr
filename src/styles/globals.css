@@ -26,3 +26,10 @@ body {
 .desktop-hidden {
   @apply lg:hidden;
 }
+
+.bg-main-bg {
+  background: radial-gradient(circle, #5a5a5a 10%, transparent 11%);
+  background-size: 1em 1em;
+  background-color: #14151a;
+  opacity: 1;
+}
