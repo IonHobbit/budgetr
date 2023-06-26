@@ -19,11 +19,44 @@ import EmptyState from "@/components/EmptyState";
 import { Account } from "@/models/account";
 import { Budget, IBudgetItem } from "@/models/budget";
 import { Transaction, TransactionType } from "@/models/transaction";
+import CategoryModal from "@/components/modals/CategoryModal";
+import { useModal } from "@/components/ModalManager";
+import routes from "@/constants/routes";
+import { selectCategories } from "@/store/slices/categoriesSlice";
+import AccountModal from "@/components/modals/AccountModal";
+import BudgetModal from "@/components/modals/BudgetModal";
 
 const DashboardPage: NextPageWithLayout = () => {
   const user = useSelector((state: RootState) => selectUser(state));
   const budgets = useSelector((state: RootState) => selectBudgets(state));
   const accounts = useSelector((state: RootState) => selectAccounts(state));
+  const categories = useSelector((state: RootState) => selectCategories(state));
+
+  const tasks: Array<{
+    name: "categories" | "accounts" | "budgets";
+    icon: string;
+    text: string;
+    modal: any;
+  }> = [
+    {
+      icon: "solar:folder-favourite-bookmark-bold-duotone",
+      text: "Setup categories",
+      name: "categories",
+      modal: <CategoryModal />,
+    },
+    {
+      icon: routes[2].icon,
+      text: "Setup bank accounts",
+      name: "accounts",
+      modal: <AccountModal />,
+    },
+    {
+      icon: routes[3].icon,
+      text: "Setup a budget",
+      name: "budgets",
+      modal: <BudgetModal />,
+    },
+  ];
 
   const Greeting = () => {
     let myDate = new Date();
@@ -41,7 +74,20 @@ const DashboardPage: NextPageWithLayout = () => {
     );
   };
 
+  const { showModal } = useModal();
   const { getCategory } = useMeta();
+
+  const setupTasks = useMemo(() => {
+    const completedTasks = {
+      budgets: budgets.length > 0,
+      accounts: accounts.length < 0,
+      categories: categories.length < 0,
+    };
+
+    return tasks.filter((task) => {
+      return !completedTasks[task.name];
+    });
+  }, [categories, accounts, budgets]);
 
   const currentBudget = useMemo(() => {
     const currentTime =
@@ -122,11 +168,39 @@ const DashboardPage: NextPageWithLayout = () => {
   return (
     <>
       <div className="py-6 space-y-6 h-full overflow-y-auto">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col space-y-3 lg:space-y-0 lg:flex-row items-center justify-between">
           <div>
             <Greeting />
             <p>Let's see how much you have spent today</p>
           </div>
+          {setupTasks.length > 0 && (
+            <div className="space-y-2 flex flex-col items-end w-full">
+              <p className="text-xs">
+                Here's a couple of things to get you started
+              </p>
+              <div className="flex items-center justify-end space-x-4 overflow-auto w-full">
+                {setupTasks.map((tasks, index) => {
+                  return (
+                    <React.Fragment key={index}>
+                      <div
+                        className="p-2 px-4 w-44 rounded cursor-pointer flex items-center space-x-2 bg-primary text-white"
+                        onClick={() => showModal(tasks.modal)}
+                      >
+                        <Icon width={40} icon={tasks.icon} />
+                        <p className="text-sm">{tasks.text}</p>
+                      </div>
+                      {index < setupTasks.length - 1 && (
+                        <Icon
+                          className="flex-shrink-0"
+                          icon="solar:arrow-right-line-duotone"
+                        />
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="bg-secondary p-4 rounded w-full text-white space-y-2">
@@ -188,65 +262,65 @@ const DashboardPage: NextPageWithLayout = () => {
             {currentBudget ? (
               <>
                 <h3>{currentBudget.title} Budget</h3>
-                {currentBudget.expenses.length > 1 ? (
-                  <div className="space-y-4">
-                    {currentBudget.expenses.map((budgetItem: IBudgetItem) => {
-                      const categoryTransactions = transactions.expenses.filter(
-                        (transaction: Transaction) =>
-                          transaction.category == budgetItem.category
-                      );
-                      const transactionCosts = categoryTransactions.reduce(
-                        (total, transaction) => +total + +transaction.amount,
-                        0
-                      );
-                      const percentageSpent = Math.floor(
-                        (transactionCosts / budgetItem.amount) * 100
-                      );
-                      const category = getCategory(budgetItem.category);
+                <div className="space-y-4 max-h-[680px] overflow-auto">
+                  {currentBudget.expenses.map((budgetItem: IBudgetItem) => {
+                    const categoryTransactions = transactions.expenses.filter(
+                      (transaction: Transaction) =>
+                        transaction.category == budgetItem.category
+                    );
+                    const transactionCosts = categoryTransactions.reduce(
+                      (total, transaction) => +total + +transaction.amount,
+                      0
+                    );
+                    const percentageSpent = Math.floor(
+                      (transactionCosts / budgetItem.amount) * 100
+                    );
+                    const category = getCategory(budgetItem.category);
 
-                      return (
-                        <React.Fragment key={budgetItem.category}>
-                          <div
-                            title={`${percentageSpent}% of ${category?.name} allocation spent`}
-                            className="flex flex-col w-full space-y-2"
-                          >
-                            <p>
-                              {category?.name}{" "}
-                              <span className="text-xs">
-                                [{percentageSpent}%]
-                              </span>
-                            </p>
-                            <div className="flex space-x-2">
-                              <div className="relative bg-background h-2 w-full overflow-hidden">
-                                <div
-                                  className="absolute h-2"
-                                  style={{
-                                    width: `${
-                                      percentageSpent == 0
-                                        ? 0.5
-                                        : percentageSpent
-                                    }%`,
-                                    backgroundColor:
-                                      percentageSpent >= 100
-                                        ? "#A50000"
-                                        : "#29A9CE",
-                                  }}
-                                ></div>
+                    return (
+                      <React.Fragment key={budgetItem.category}>
+                        <div
+                          title={`${percentageSpent}% of ${category?.name} allocation spent`}
+                          className="flex flex-col w-full space-y-2"
+                        >
+                          <p>{category?.name}</p>
+                          <div className="flex space-x-2">
+                            <div className="relative bg-background flex items-center pr-2 h-8 w-full overflow-hidden">
+                              <div
+                                className="absolute h-full flex items-center justify-end pr-1"
+                                style={{
+                                  width: `${
+                                    percentageSpent >= 100
+                                      ? 100
+                                      : percentageSpent
+                                  }%`,
+                                  backgroundColor:
+                                    percentageSpent >= 100
+                                      ? "#A50000"
+                                      : "#29A9CE",
+                                }}
+                              >
+                                <p className="text-xs">
+                                  {helperUtil.currencyConverter(
+                                    transactionCosts
+                                  )}{" "}
+                                  <span className="text-[10px]">
+                                    [{percentageSpent}%]
+                                  </span>
+                                </p>
                               </div>
+                              <p className=" ml-auto text-xs">
+                                {helperUtil.currencyConverter(
+                                  budgetItem.amount
+                                )}
+                              </p>
                             </div>
-                            <p className="text-sm">
-                              {helperUtil.currencyConverter(transactionCosts)}{" "}
-                              of{" "}
-                              {helperUtil.currencyConverter(budgetItem.amount)}
-                            </p>
                           </div>
-                        </React.Fragment>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <EmptyState message="No expenses available " />
-                )}
+                        </div>
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
               </>
             ) : (
               <div className="grid place-items-center h-full">

@@ -27,6 +27,7 @@ import { fetchBudgets, selectBudgets } from "@/store/slices/budgetsSlice";
 import { createBudget, editBudget } from "@/pages/api/budget.api";
 import { Icon } from "@iconify/react";
 import { selectUser } from "@/store/slices/userSlice";
+import CategoryModal from "./CategoryModal";
 
 type BudgetModalProps = {
   budget?: Budget;
@@ -43,7 +44,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({ budget }) => {
   const [selectedType, setSelectedType] = useState(BUDGET_CATEGORIES[0]);
 
   const dispatcher = useDispatcher();
-  const { hideModal } = useModal();
+  const { hideModal, showModal } = useModal();
 
   const incomeCategories = useMemo(() => {
     const filtered = categories.filter(
@@ -187,8 +188,8 @@ const BudgetModal: React.FC<BudgetModalProps> = ({ budget }) => {
   useEffect(() => {
     if (user) {
       dispatcher(fetchBudgets(user.id));
+      dispatcher(fetchCategories(user!.id));
     }
-    dispatcher(fetchCategories());
 
     if (budget) {
       budgetForm.setFieldValue("title", budget.title);
@@ -219,7 +220,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({ budget }) => {
             title="Start Date"
             name="startDate"
             type="date"
-            min={helperUtil.dateFormatter(new Date())}
+            min={!budget ? helperUtil.dateFormatter(new Date()) : undefined}
             variation="secondary"
             form={budgetForm}
           />
@@ -240,7 +241,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({ budget }) => {
                 className={`px-4 py-2 rounded  capitalize cursor-pointer hover:bg-primary hover:text-white ${
                   selectedType == type
                     ? "bg-primary text-white"
-                    : "bg-secondary text-text"
+                    : "bg-secondary text-white"
                 }`}
               >
                 {type}
@@ -254,112 +255,205 @@ const BudgetModal: React.FC<BudgetModalProps> = ({ budget }) => {
             <Icon icon="solar:add-square-line-duotone" />
           </div>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-4 max-h-60 overflow-auto">
           {
             {
               expenses: (
                 <>
-                  {expenses.map((expense: IBudgetItem, index) => {
-                    return (
-                      <div
-                        key={expense.category}
-                        className="grid grid-cols-6 place-items-end gap-x-4"
-                      >
-                        <Select
-                          className="col-span-3"
-                          options={helperUtil.transformToSelectOptions([
-                            categories.find(
-                              (category: Category) =>
-                                expense.category == category.id
-                            ),
-                            ...expenseCategories.unselected,
-                          ])}
-                          variation="secondary"
-                          title="Category"
-                          value={expense.category}
-                          onChange={(value) => {
-                            updateExpenses(
-                              { ...expense, category: value },
-                              index
+                  {expenseCategories.filtered.length > 0 ? (
+                    <>
+                      {expenses.length > 0 ? (
+                        <>
+                          {expenses.map((expense: IBudgetItem, index) => {
+                            return (
+                              <div
+                                key={expense.category}
+                                className="grid grid-cols-6 place-items-end gap-x-4"
+                              >
+                                <Select
+                                  className="col-span-3"
+                                  options={helperUtil.transformToSelectOptions([
+                                    categories.find(
+                                      (category: Category) =>
+                                        expense.category == category.id
+                                    ),
+                                    ...expenseCategories.unselected,
+                                  ])}
+                                  variation="secondary"
+                                  title="Category"
+                                  value={expense.category}
+                                  onChange={(value) => {
+                                    updateExpenses(
+                                      { ...expense, category: value },
+                                      index
+                                    );
+                                  }}
+                                />
+                                <Input
+                                  className="col-span-2"
+                                  title="Projected Amount"
+                                  type="number"
+                                  variation="secondary"
+                                  value={expense.amount}
+                                  onChange={(value) =>
+                                    updateExpenses(
+                                      {
+                                        ...expense,
+                                        amount: Number(value),
+                                      },
+                                      index
+                                    )
+                                  }
+                                />
+                                <div
+                                  onClick={() => removeExpense(index)}
+                                  className="grid place-items-center cursor-pointer bg-error text-white rounded p-3"
+                                >
+                                  <Icon icon="solar:minus-square-line-duotone" />
+                                </div>
+                              </div>
                             );
-                          }}
-                        />
-                        <Input
-                          className="col-span-2"
-                          title="Projected Amount"
-                          type="number"
-                          variation="secondary"
-                          value={expense.amount}
-                          onChange={(value) =>
-                            updateExpenses(
-                              {
-                                ...expense,
-                                amount: Number(value),
-                              },
-                              index
-                            )
-                          }
-                        />
-                        <div
-                          onClick={() => removeExpense(index)}
-                          className="grid place-items-center cursor-pointer bg-error text-white rounded p-3"
-                        >
-                          <Icon icon="solar:minus-square-line-duotone" />
+                          })}
+                        </>
+                      ) : (
+                        <div className="h-40 grid place-items-center">
+                          <div className="space-y-2 text-center flex flex-col items-center">
+                            <Icon
+                              width={40}
+                              rotate={1}
+                              icon="solar:reply-bold-duotone"
+                            />
+                            <p className="text-sm inline-flex items-center">
+                              Click the{" "}
+                              <Icon
+                                width={20}
+                                className="text-primary mx-1"
+                                icon="solar:add-square-line-duotone"
+                              />
+                              icon to add your budget expenses
+                            </p>
+                          </div>
                         </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="h-40 grid place-items-center">
+                      <div className="space-y-2 text-center flex flex-col items-center">
+                        <Icon width={40} icon="fluent:border-none-20-filled" />
+                        <p className="text-sm">
+                          You have no expense categories yet.
+                        </p>
+                        <p className="text-sm">Create one to get started.</p>
+                        <Button
+                          size="small"
+                          onClick={() => showModal(<CategoryModal />)}
+                        >
+                          Create Category
+                        </Button>
                       </div>
-                    );
-                  })}
+                    </div>
+                  )}
                 </>
               ),
               income: (
                 <>
-                  {income.map((income: IBudgetItem, index) => {
-                    return (
-                      <div
-                        key={income.category}
-                        className="grid grid-cols-6 place-items-end gap-x-4"
-                      >
-                        <Select
-                          className="col-span-3"
-                          options={helperUtil.transformToSelectOptions([
-                            categories.find(
-                              (category: Category) =>
-                                income.category == category.id
-                            ),
-                            ...incomeCategories.unselected,
-                          ])}
-                          variation="secondary"
-                          title="Category"
-                          value={income.category}
-                          onChange={(value) => {
-                            updateIncome({ ...income, category: value }, index);
-                          }}
-                        />
-                        <Input
-                          className="col-span-2"
-                          title="Projected Amount"
-                          type="number"
-                          variation="secondary"
-                          value={income.amount}
-                          onChange={(value) =>
-                            updateIncome(
-                              {
-                                ...income,
-                                amount: Number(value),
-                              },
-                              index
+                  {incomeCategories.filtered.length > 0 ? (
+                    <>
+                      {expenses.length > 0 ? (
+                        <>
+                          {income.map((income: IBudgetItem, index) => {
+                            return (
+                              <div
+                                key={income.category}
+                                className="grid grid-cols-6 place-items-end gap-x-4"
+                              >
+                                <Select
+                                  className="col-span-3"
+                                  options={helperUtil.transformToSelectOptions([
+                                    categories.find(
+                                      (category: Category) =>
+                                        income.category == category.id
+                                    ),
+                                    ...incomeCategories.unselected,
+                                  ])}
+                                  variation="secondary"
+                                  title="Category"
+                                  value={income.category}
+                                  onChange={(value) => {
+                                    updateIncome(
+                                      { ...income, category: value },
+                                      index
+                                    );
+                                  }}
+                                />
+                                <Input
+                                  className="col-span-2"
+                                  title="Projected Amount"
+                                  type="number"
+                                  variation="secondary"
+                                  value={income.amount}
+                                  onChange={(value) =>
+                                    updateIncome(
+                                      {
+                                        ...income,
+                                        amount: Number(value),
+                                      },
+                                      index
+                                    )
+                                  }
+                                />
+                                <div
+                                  onClick={() => removeIncome(index)}
+                                  className="grid place-items-center cursor-pointer bg-error text-white rounded p-3"
+                                >
+                                  <Icon icon="solar:minus-square-line-duotone" />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </>
+                      ) : (
+                        <div className="h-40 grid place-items-center">
+                          <div className="space-y-2 text-center flex flex-col items-center">
+                            <Icon
+                              width={40}
+                              rotate={1}
+                              icon="solar:reply-bold-duotone"
+                            />
+                            <p className="text-sm inline-flex items-center">
+                              Click the{" "}
+                              <Icon
+                                width={20}
+                                className="text-primary mx-1"
+                                icon="solar:add-square-line-duotone"
+                              />
+                              icon to add your budgeted income
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="h-40 grid place-items-center">
+                      <div className="space-y-2 text-center flex flex-col items-center">
+                        <Icon width={40} icon="fluent:border-none-20-filled" />
+                        <p className="text-sm">
+                          You have no income categories yet.
+                        </p>
+                        <p className="text-sm">Create one to get started.</p>
+                        <Button
+                          size="small"
+                          onClick={() =>
+                            showModal(
+                              <CategoryModal type={CategoryType.INCOME} />
                             )
                           }
-                        />
-                        <div
-                          onClick={() => removeIncome(index)}
-                          className="grid place-items-center cursor-pointer bg-error text-white rounded p-3"
                         >
-                          <Icon icon="solar:minus-square-line-duotone" />
-                        </div>
+                          Create Category
+                        </Button>
                       </div>
-                    );
-                  })}
+                    </div>
+                  )}
                 </>
               ),
             }[selectedType]

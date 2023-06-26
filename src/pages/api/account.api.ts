@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { CreateAccountRequest } from "@/interfaces/requests.interface";
-import { writeToFirestore } from "@/utils/firebase.util";
+import { CreateAccountRequest, DeleteAccountRequest, EditAccountRequest } from "@/interfaces/requests.interface";
+import { deleteFirestoreDocument, updateFirestoreDocument, writeToFirestore } from "@/utils/firebase.util";
 import { BankAPIResponse } from '@/interfaces/response.interface';
 import { IBank } from '@/models/account';
 
@@ -8,6 +8,20 @@ export const createAccount = async (userID: string, account: CreateAccountReques
   const payload = Object.assign({}, account) as any;
 
   const response = await writeToFirestore(`Users/${userID}/Accounts`, payload)
+  return response
+}
+
+export const editAccount = async (userID: string, account: EditAccountRequest) => {
+  const payload = Object.assign({}, account) as any;
+  delete payload.id
+
+
+  const response = await updateFirestoreDocument(`Users/${userID}/Accounts/${account.id}`, payload)
+  return response
+}
+
+export const deleteAccount = async (userID: string, account: DeleteAccountRequest) => {
+  const response = await deleteFirestoreDocument(`Users/${userID}/Accounts/${account.id}`)
   return response
 }
 

@@ -1,4 +1,4 @@
-import { Account } from "@/models/account";
+import { Account, IBank } from "@/models/account";
 import { IBudgetItem } from "@/models/budget";
 import { CategoryType } from "@/models/category";
 import { TransactionType } from "@/models/transaction";
@@ -18,9 +18,32 @@ export interface CreateCategoryRequest {
   type: CategoryType;
 }
 
+export interface EditCategoryRequest {
+  id: string;
+  name?: string;
+  type?: CategoryType;
+}
+
+export interface DeleteCategoryRequest {
+  id: string;
+}
+
 export interface CreateAccountRequest {
   name: string;
   balance: number;
+  bank: IBank;
+  colorCode: string;
+}
+
+export interface EditAccountRequest {
+  id: string;
+  name?: string;
+  balance?: number;
+  colorCode?: string;
+}
+
+export interface DeleteAccountRequest {
+  id: string;
 }
 
 export interface CreateBudgetRequest {

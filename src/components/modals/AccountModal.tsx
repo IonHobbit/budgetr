@@ -8,7 +8,10 @@ import Button from "../Button";
 import { useEffect, useMemo, useState } from "react";
 import notification from "@/utils/notification";
 import { useModal } from "../ModalManager";
-import { CreateAccountRequest } from "@/interfaces/requests.interface";
+import {
+  CreateAccountRequest,
+  EditAccountRequest,
+} from "@/interfaces/requests.interface";
 import { DUPLICATE_ENTITY } from "@/constants/errorMessages";
 import useDispatcher from "@/hooks/useDispatcher";
 import {
@@ -18,14 +21,23 @@ import {
   setBanks,
 } from "@/store/slices/accountsSlice";
 import { Account, IBank } from "@/models/account";
-import { createAccount, fetchBanks } from "@/pages/api/account.api";
+import {
+  createAccount,
+  deleteAccount,
+  editAccount,
+  fetchBanks,
+} from "@/pages/api/account.api";
 import Select from "../Select";
 import helperUtil from "@/utils/helper.util";
 import Image from "next/image";
 import { HexColorInput, HexColorPicker } from "react-colorful";
 import { selectUser } from "@/store/slices/userSlice";
 
-const AccountModal: React.FC = () => {
+type AccountModalProps = {
+  account?: Account;
+};
+
+const AccountModal: React.FC<AccountModalProps> = ({ account }) => {
   const user = useSelector((state: RootState) => selectUser(state));
   const banks = useSelector((state: RootState) => selectBanks(state));
   const accounts = useSelector((state: RootState) => selectAccounts(state));
@@ -38,7 +50,10 @@ const AccountModal: React.FC = () => {
 
   const submitForm = async (payload: any) => {
     if (loading) return;
-    if (accounts.find((account: Account) => account.name == payload.name))
+    if (
+      !account &&
+      accounts.find((account: Account) => account.name == payload.name)
+    )
       return notification.warning(DUPLICATE_ENTITY);
 
     const _payload: CreateAccountRequest = {
@@ -50,12 +65,37 @@ const AccountModal: React.FC = () => {
     setLoading(true);
 
     try {
-      await createAccount(user!.id, _payload);
-      notification.success("Account created");
+      if (account) {
+        const updatePayload: EditAccountRequest = {
+          ..._payload,
+          id: account.id,
+        };
+        await editAccount(user!.id, updatePayload);
+        notification.success("Account updated");
+      } else {
+        await createAccount(user!.id, _payload);
+        notification.success("Account created");
+      }
       dispatcher(fetchAccounts(user!.id));
       setLoading(false);
       hideModal();
     } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  const deleteHandler = async () => {
+    setLoading(true);
+
+    try {
+      if (account) {
+        await deleteAccount(user!.id, account);
+        notification.success("Account deleted");
+      }
+      dispatcher(fetchAccounts(user!.id));
+      hideModal();
+    } catch (error) {
+    } finally {
       setLoading(false);
     }
   };
@@ -73,7 +113,7 @@ const AccountModal: React.FC = () => {
 
   const populateBanks = async () => {
     const response = await fetchBanks();
-    accountForm.setFieldValue("bank", response[0].slug);
+    if (!account) accountForm.setFieldValue("bank", response[0].slug);
     dispatcher(setBanks(response));
   };
 
@@ -86,11 +126,20 @@ const AccountModal: React.FC = () => {
 
   useEffect(() => {
     populateBanks();
+
+    if (account) {
+      accountForm.setFieldValue("name", account.name);
+      accountForm.setFieldValue("bank", account.bank.slug);
+      accountForm.setFieldValue("balance", account.balance);
+      setColorCode(account.colorCode);
+    }
   }, []);
 
   return (
     <Modal size="x-small" spacing={true}>
-      <h5>Add Bank Account</h5>
+      <div className="flex items-center justify-between">
+        <h5>{account ? "Edit" : "Add"} Bank Account</h5>
+      </div>
 
       <form
         onSubmit={accountForm.handleSubmit}
@@ -128,13 +177,15 @@ const AccountModal: React.FC = () => {
           )}
           form={accountForm}
         />
-        <Input
-          title="Opening Balance"
-          name="balance"
-          type="number"
-          variation="secondary"
-          form={accountForm}
-        />
+        {!account && (
+          <Input
+            title="Opening Balance"
+            name="balance"
+            type="number"
+            variation="secondary"
+            form={accountForm}
+          />
+        )}
         <div className="grid grid-cols-2 gap-x-4 gap-y-2">
           <p className="col-span-2 text-sm">Account Color</p>
           <div className="space-y-1.5">
@@ -156,7 +207,14 @@ const AccountModal: React.FC = () => {
             />
           </div>
         </div>
-        <Button loading={loading}>Create Account</Button>
+        <Button loading={loading}>
+          {account ? "Update" : "Create"} Account
+        </Button>
+        {account && (
+          <Button onClick={deleteHandler} loading={loading} variation="errored">
+            Delete Account
+          </Button>
+        )}
       </form>
     </Modal>
   );

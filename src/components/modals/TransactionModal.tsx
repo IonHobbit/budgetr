@@ -26,6 +26,8 @@ import { TRANSACTION_TYPES } from "@/constants/constants";
 import useDispatcher from "@/hooks/useDispatcher";
 import { selectUser } from "@/store/slices/userSlice";
 import { CreateTransactionRequest } from "@/interfaces/requests.interface";
+import CategoryModal from "./CategoryModal";
+import AccountModal from "./AccountModal";
 
 const TransactionModal: React.FC = () => {
   const user = useSelector((state: RootState) => selectUser(state));
@@ -37,7 +39,7 @@ const TransactionModal: React.FC = () => {
   const [receivingAccount, setReceivingAccount] = useState<Account>();
 
   const dispatcher = useDispatcher();
-  const { hideModal } = useModal();
+  const { hideModal, showModal } = useModal();
 
   const transactionTypes = helperUtil.transformToSelectOptions(
     TRANSACTION_TYPES,
@@ -115,12 +117,47 @@ const TransactionModal: React.FC = () => {
   useEffect(() => {
     if (user) {
       dispatcher(fetchAccounts(user!.id));
+      dispatcher(fetchCategories(user!.id));
     }
-    
-    dispatcher(fetchCategories());
-    transactionForm.setFieldValue("category", categoryOptions[0].key);
-    setAccount(accounts[0]);
-  }, [user]);
+
+    if (categories.length > 0) {
+      transactionForm.setFieldValue("category", categoryOptions[0]?.key);
+    }
+
+    if (accounts.length > 0) {
+      setAccount(accounts[0]);
+    }
+  }, []);
+
+  if (categories.length == 0) {
+    return (
+      <Modal size="x-small">
+        <div className="space-y-4 text-center flex flex-col items-center">
+          <Icon width={60} icon="fluent:border-none-20-filled" />
+          <p>You have no categories yet.</p>
+          <p>Create one to get started recording your transactions</p>
+          <Button size="small" onClick={() => showModal(<CategoryModal />)}>
+            Create Category
+          </Button>
+        </div>
+      </Modal>
+    );
+  }
+
+  if (accounts.length == 0) {
+    return (
+      <Modal size="x-small">
+        <div className="space-y-4 text-center flex flex-col items-center">
+          <Icon width={60} icon="fluent:border-none-20-filled" />
+          <p>You have no accounts setup yet.</p>
+          <p>Create one to get started recording your transactions</p>
+          <Button size="small" onClick={() => showModal(<AccountModal />)}>
+            Setup Account
+          </Button>
+        </div>
+      </Modal>
+    );
+  }
 
   return (
     <Modal size="x-small" spacing={true}>

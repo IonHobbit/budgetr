@@ -39,8 +39,8 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children, pageName }) => {
     if (user) {
       dispatcher(fetchBudgets(user!.id));
       dispatcher(fetchAccounts(user!.id));
+      dispatcher(fetchCategories(user!.id));
     }
-    dispatcher(fetchCategories());
   }, [user]);
 
   return (
@@ -51,13 +51,13 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children, pageName }) => {
       </Head>
       <div
         onClick={() => showModal(<CategoryModal />)}
-        className="mobile-hidden fixed bottom-5 right-24 !grid place-items-center cursor-pointer bg-primary text-white rounded-full w-14 h-14"
+        className="mobile-hidden lg:!grid fixed bottom-5 right-24 place-items-center cursor-pointer bg-primary text-white rounded-full w-14 h-14"
       >
         <Icon width={28} icon="solar:folder-favourite-bookmark-bold-duotone" />
       </div>
       <div
         onClick={() => showModal(<TransactionModal />)}
-        className="mobile-hidden fixed bottom-5 right-5 !grid place-items-center cursor-pointer bg-primary text-white rounded-full w-14 h-14"
+        className="mobile-hidden lg:!grid fixed bottom-5 right-5 place-items-center cursor-pointer bg-primary text-white rounded-full w-14 h-14"
       >
         <Icon width={28} icon="solar:notes-bold-duotone" />
       </div>
@@ -76,10 +76,10 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children, pageName }) => {
         )}
         <div
           className={`bg-background text-white w-screen ${
-            isOffline ? "h-[77vh]" : "h-[92vh]"
-          } lg:h-screen overflow-hidden`}
+            isOffline ? "h-[77vh]" : ""
+          } h-screen overflow-hidden`}
         >
-          <div className="grid lg:grid-cols-12 h-full w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 h-full w-full">
             <aside className="lg:col-span-2 px-4 space-y-6 mobile-hidden bg-secondary">
               <Navigation routes={routes} />
             </aside>
@@ -91,10 +91,8 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children, pageName }) => {
             </div>
           </div>
         </div>
-        <div className="w-screen h-[8vh] bg-background desktop-hidden px-6 flex items-center">
-          <div className="bg-white rounded-lg w-full mx-auto flex items-center px-4 py-2">
-            <Navigation routes={routes} mobile={true} />
-          </div>
+        <div className="desktop-hidden fixed bottom-3 left-1/2 -translate-x-1/2 bg-white rounded-lg w-[90%] max-w-sm mx-auto flex items-center px-4 py-2">
+          <Navigation routes={routes} mobile={true} />
         </div>
       </main>
     </>

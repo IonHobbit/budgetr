@@ -34,7 +34,13 @@ const AccountsPage: NextPageWithLayout = () => {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
               {accounts.map((account: Account) => {
                 return (
-                  <div key={account.id} className="space-y-3">
+                  <div
+                    key={account.id}
+                    className="space-y-3 cursor-pointer"
+                    onClick={() =>
+                      showModal(<AccountModal account={account} />)
+                    }
+                  >
                     <div className="bg-secondary p-4">
                       <ResizedImage
                         className="w-full h-32"

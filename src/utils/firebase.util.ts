@@ -1,5 +1,5 @@
 import { auth, firestore, googleProvider } from "@/config/firebase";
-import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { AnyAction, Dispatch } from "redux";
 import { AdditionalUserInfo, GoogleAuthProvider, User, getAdditionalUserInfo, signInWithPopup } from "firebase/auth";
 
@@ -57,6 +57,16 @@ export const updateFirestoreDocument = async (documentPath: string, data: any) =
   try {
     const documentReference = doc(firestore, documentPath)
     const response = await updateDoc(documentReference, { ...data, timestamp: serverTimestamp() })
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export const deleteFirestoreDocument = async (documentPath: string) => {
+  try {
+    const documentReference = doc(firestore, documentPath)
+    const response = await deleteDoc(documentReference)
     return response;
   } catch (error) {
     console.error(error);

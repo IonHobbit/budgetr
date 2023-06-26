@@ -47,8 +47,8 @@ export const CategoriesSlice = createSlice({
 
 export const fetchCategories = createAsyncThunk(
   'categories/fetchCategories',
-  () => {
-    return fetchFirestoreData(`Categories`)
+  (userID: string) => {
+    return fetchFirestoreData(`Users/${userID}/Categories`)
   }
 )
 
