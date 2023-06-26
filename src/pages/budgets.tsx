@@ -23,7 +23,7 @@ const BudgetsPage: NextPageWithLayout = () => {
 
   return (
     <>
-      <div className="py-6 h-full">
+      <div className="py-6 h-full overflow-y-auto">
         <div className="grid lg:grid-cols-8 gap-6">
           <div className="lg:col-span-6 space-y-6 h-full">
             {budgets.length > 0 ? (

@@ -68,7 +68,7 @@ const TransactionsPage: NextPageWithLayout = () => {
 
   return (
     <>
-      <div className="py-6 space-y-6 h-full">
+      <div className="py-6 space-y-6 h-full overflow-y-auto">
         {accounts.length > 0 ? (
           <>
             <div className="flex items-center space-x-4">

@@ -79,9 +79,9 @@ const DashboardPage: NextPageWithLayout = () => {
 
   const setupTasks = useMemo(() => {
     const completedTasks = {
-      budgets: budgets.length > 0,
-      accounts: accounts.length < 0,
-      categories: categories.length < 0,
+      budgets: budgets && budgets.length > 0,
+      accounts: accounts && accounts.length > 0,
+      categories: categories && categories.length > 0,
     };
 
     return tasks.filter((task) => {
@@ -169,7 +169,7 @@ const DashboardPage: NextPageWithLayout = () => {
     <>
       <div className="py-6 space-y-6 h-full overflow-y-auto">
         <div className="flex flex-col space-y-3 lg:space-y-0 lg:flex-row items-center justify-between">
-          <div>
+          <div className="flex-shrink-0">
             <Greeting />
             <p>Let's see how much you have spent today</p>
           </div>
