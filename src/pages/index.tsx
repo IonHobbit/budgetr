@@ -300,6 +300,13 @@ const DashboardPage: NextPageWithLayout = () => {
                                       : "#29A9CE",
                                 }}
                               >
+                                {percentageSpent >= 70 && (
+                                  <p className="text-xs pl-2 mr-auto">
+                                    {helperUtil.currencyConverter(
+                                      budgetItem.amount
+                                    )}
+                                  </p>
+                                )}
                                 <p className="text-xs">
                                   {helperUtil.currencyConverter(
                                     transactionCosts
@@ -309,11 +316,13 @@ const DashboardPage: NextPageWithLayout = () => {
                                   </span>
                                 </p>
                               </div>
-                              <p className=" ml-auto text-xs">
-                                {helperUtil.currencyConverter(
-                                  budgetItem.amount
-                                )}
-                              </p>
+                              {percentageSpent < 70 && (
+                                <p className=" ml-auto text-xs">
+                                  {helperUtil.currencyConverter(
+                                    budgetItem.amount
+                                  )}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </div>

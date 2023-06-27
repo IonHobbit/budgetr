@@ -41,10 +41,20 @@ const TransactionModal: React.FC = () => {
   const dispatcher = useDispatcher();
   const { hideModal, showModal } = useModal();
 
-  const transactionTypes = helperUtil.transformToSelectOptions(
-    TRANSACTION_TYPES,
-    ["Expense", "Income", "Transfer"]
-  );
+  const transactionTypes = useMemo(() => {
+    if (accounts.length > 1) {
+      return helperUtil.transformToSelectOptions(TRANSACTION_TYPES, [
+        "Expense",
+        "Income",
+        "Transfer",
+      ]);
+    } else {
+      return helperUtil.transformToSelectOptions(
+        [TRANSACTION_TYPES[0], TRANSACTION_TYPES[1]],
+        ["Expense", "Income", "Transfer"]
+      );
+    }
+  }, [accounts]);
 
   const submitForm = async (payload: CreateTransactionRequest) => {
     if (loading) return;
@@ -113,6 +123,10 @@ const TransactionModal: React.FC = () => {
     }
     return [] as SelectOption[];
   }, [transactionForm.values.type, categories]);
+
+  useEffect(() => {
+    transactionForm.setFieldValue("category", categoryOptions[0]?.key);
+  }, [transactionForm.values.type]);
 
   useEffect(() => {
     if (user) {
