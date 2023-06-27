@@ -175,7 +175,7 @@ const TransactionModal: React.FC = () => {
 
   return (
     <Modal size="x-small" spacing={true}>
-      <h5>Add New Transaction</h5>
+      <h5>Record a new Transaction</h5>
 
       <form
         onSubmit={transactionForm.handleSubmit}
