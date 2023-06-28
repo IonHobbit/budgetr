@@ -3,7 +3,7 @@ import { RootState } from '../rootReducer';
 import { fetchFirestoreData } from '@/utils/firebase.util';
 import { resetAll } from '../rootAction';
 import { Account, IAccount, IBank } from '@/models/account';
-import { ITransaction, Transaction } from '@/models/transaction';
+import { ITransaction, Transaction, TransactionType } from '@/models/transaction';
 import helperUtil from '@/utils/helper.util';
 
 interface AccountsSliceState {
@@ -59,8 +59,38 @@ export const fetchAccounts = createAsyncThunk(
           const transactionResponse = await fetchFirestoreData(`Users/${userID}/Accounts/${account.id}/Transactions`)
           const transactions = transactionResponse
             ?.map((transaction: ITransaction) => new Transaction(transaction, account))
-            .sort((a: Transaction, b: Transaction) => helperUtil.timestampToDateConverter(b.date).getTime() - helperUtil.timestampToDateConverter(a.date).getTime())
-          return { ...account, transactions }
+            .sort((a: Transaction, b: Transaction) => helperUtil.timestampToDateConverter(b.date).getTime() - helperUtil.timestampToDateConverter(a.date).getTime()) || [];
+          const expenses = transactions
+            .filter(
+              (transaction: Transaction) =>
+                transaction.type == TransactionType.EXPENSE
+            );
+          const income = transactions
+            .filter(
+              (transaction: Transaction) =>
+                transaction.type == TransactionType.INCOME
+            )
+          const transfers = transactions
+            .filter(
+              (transaction: Transaction) =>
+                transaction.type == TransactionType.TRANSFER
+            )
+          const totals = {
+            expenses: expenses
+              .reduce((sum: number, transaction: Transaction) => {
+                return +sum + +transaction.amount;
+              }, 0),
+            income: income
+              .reduce((sum: number, transaction: Transaction) => {
+                return +sum + +transaction.amount;
+              }, 0),
+            transfers: transfers
+              .reduce((sum: number, transaction: Transaction) => {
+                return +sum + +transaction.amount;
+              }, 0),
+          }
+
+          return { ...account, transactions, expenses, income, transfers, totals }
         })
       )
       return accounts;
