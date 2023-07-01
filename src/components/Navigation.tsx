@@ -7,6 +7,7 @@ import ResizedImage from "./ResizedImage";
 import CategoryModal from "./modals/CategoryModal";
 import TransactionModal from "./modals/TransactionModal";
 import { useModal } from "./ModalManager";
+import IssueModal from "./modals/IssueModal";
 
 type NavigationProps = {
   mobile?: boolean;
@@ -19,7 +20,6 @@ const Navigation: React.FC<NavigationProps> = ({ mobile, routes }) => {
   const activeClasses = "bg-white font-semibold";
 
   const { showModal } = useModal();
-
   useEffect(() => {
     const route = router.asPath.split("?")[0];
     setCurrentRoute(route);
@@ -30,14 +30,14 @@ const Navigation: React.FC<NavigationProps> = ({ mobile, routes }) => {
       className={`${
         mobile
           ? "flex items-center w-full justify-between text-primary"
-          : "space-y-4"
+          : "space-y-4 flex flex-col"
       }`}
     >
       <Link href="/" className="mobile-hidden">
         <ResizedImage
           src="/budgetr-logo-alt.png"
           alt="Budgetr Logo"
-          className="w-44"
+          className="w-32 xl:w-44 mx-auto"
         />
       </Link>
       {routes.map(({ url, icon, name }: Route, index: number) => {
@@ -47,7 +47,10 @@ const Navigation: React.FC<NavigationProps> = ({ mobile, routes }) => {
             key={index}
             className={`flex items-center font-header text-text rounded transition-all lg:hover:bg-white
             ${mobile ? "p-2" : "p-4 py-3 space-x-3"}
-            ${currentRoute === url && (mobile ? "bg-primary text-white" : activeClasses)}`}
+            ${
+              currentRoute === url &&
+              (mobile ? "bg-primary text-white" : activeClasses)
+            }`}
           >
             <Icon icon={icon} width={mobile ? 24 : 20} />
             {!mobile && (
@@ -61,13 +64,10 @@ const Navigation: React.FC<NavigationProps> = ({ mobile, routes }) => {
       {mobile && (
         <>
           <div
-            onClick={() => showModal(<CategoryModal />)}
+            onClick={() => showModal(<IssueModal />)}
             className="grid place-items-center cursor-pointer p-2"
           >
-            <Icon
-              width={24}
-              icon="solar:folder-favourite-bookmark-bold-duotone"
-            />
+            <Icon width={24} icon="solar:chat-line-bold-duotone" />
           </div>
           <div
             onClick={() => showModal(<TransactionModal />)}
@@ -77,6 +77,13 @@ const Navigation: React.FC<NavigationProps> = ({ mobile, routes }) => {
           </div>
         </>
       )}
+      <div
+        className="flex items-center font-header text-white rounded transition-all bg-primary p-4 py-3 space-x-3 cursor-pointer mobile-hidden"
+        onClick={() => showModal(<IssueModal />)}
+      >
+        <Icon icon="solar:chat-line-bold-duotone" width={20} />
+        <p>Give Feedback</p>
+      </div>
     </div>
   );
 };

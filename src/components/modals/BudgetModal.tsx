@@ -110,7 +110,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({ budget }) => {
     if (selectedType == BudgetCategory.EXPENSES) {
       if (expenseCategories.unselected.length > 0) {
         const expense = {
-          amount: 100,
+          amount: 100.0,
           category: expenseCategories.unselected[0].id,
         } as IBudgetItem;
         updateExpenses(expense);
@@ -118,7 +118,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({ budget }) => {
     } else {
       if (incomeCategories.unselected.length > 0) {
         const income = {
-          amount: 100,
+          amount: 100.0,
           category: incomeCategories.unselected[0].id,
         } as IBudgetItem;
         updateIncome(income);
@@ -202,7 +202,10 @@ const BudgetModal: React.FC<BudgetModalProps> = ({ budget }) => {
 
   return (
     <Modal size="small" spacing={true}>
-      <h5>{budget ? "Edit" : "Create New"} Budget</h5>
+      <div className="flex items-center space-x-2">
+        <Icon width={24} icon="tabler:currency-naira" />
+        <h5>{budget ? "Edit" : "Create New"} Budget</h5>
+      </div>
 
       <form
         onSubmit={budgetForm.handleSubmit}
@@ -323,7 +326,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({ budget }) => {
                               rotate={1}
                               icon="solar:reply-bold-duotone"
                             />
-                            <p className="text-sm inline-flex items-center">
+                            <p className="text-sm whitespace-nowrap inline-flex items-center">
                               Click the{" "}
                               <Icon
                                 width={20}
@@ -420,7 +423,7 @@ const BudgetModal: React.FC<BudgetModalProps> = ({ budget }) => {
                               rotate={1}
                               icon="solar:reply-bold-duotone"
                             />
-                            <p className="text-sm inline-flex items-center">
+                            <p className="text-sm whitespace-nowrap inline-flex items-center">
                               Click the{" "}
                               <Icon
                                 width={20}

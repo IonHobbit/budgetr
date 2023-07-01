@@ -20,3 +20,8 @@ export const accountValidationSchema = Yup.object().shape({
   name: Yup.string().required("Bank Name is required"),
   balance: Yup.number().required("Balance is required"),
 })
+
+export const issueValidationSchema = Yup.object().shape({
+  title: Yup.string().required("Title is required"),
+  body: Yup.string().required("Please give a description"),
+})

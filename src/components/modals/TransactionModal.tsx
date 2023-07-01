@@ -175,7 +175,10 @@ const TransactionModal: React.FC = () => {
 
   return (
     <Modal size="x-small" spacing={true}>
-      <h5>Record a new Transaction</h5>
+      <div className="flex items-center space-x-2">
+        <Icon width={24} icon="solar:notes-bold-duotone" />
+        <h5>Record a new Transaction</h5>
+      </div>
 
       <form
         onSubmit={transactionForm.handleSubmit}
@@ -242,7 +245,7 @@ const TransactionModal: React.FC = () => {
           </div>
         )}
         <Input
-          title={`How much did you 
+          title={`How much ₦ did you 
           ${transactionForm.values.type == TransactionType.INCOME ? "get?" : ""}
           ${
             transactionForm.values.type == TransactionType.EXPENSE
@@ -256,6 +259,7 @@ const TransactionModal: React.FC = () => {
           }`}
           name="amount"
           type="number"
+          step={0.01}
           required={true}
           variation="secondary"
           form={transactionForm}

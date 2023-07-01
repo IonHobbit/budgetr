@@ -10,6 +10,7 @@ type InputProps = {
   title?: string;
   min?: string;
   max?: string;
+  step?: number;
   className?: string;
   placeholder?: string;
   required?: boolean;
@@ -29,6 +30,7 @@ const Input = (props: InputProps) => {
     title,
     min,
     max,
+    step,
     required,
     disabled,
     className,
@@ -72,7 +74,9 @@ const Input = (props: InputProps) => {
   return (
     <>
       <div className={`flex flex-col w-full ${className}`}>
-        {title && <p className="font-normal text-sm">{title}</p>}
+        {title && (
+          <p className="font-normal text-sm whitespace-nowrap">{title}</p>
+        )}
         <div
           className={`${variation == "primary" ? "primaryWrapper" : ""} ${
             name && form.errors[name] && form.touched[name] && "errored"
@@ -80,26 +84,48 @@ const Input = (props: InputProps) => {
         >
           {form && name && (
             <>
-              {type == "phone" ? (
-                <PhoneInputWithCountrySelect
-                  className={
-                    variation == "primary"
-                      ? "primary"
-                      : "secondary" + " !outline-0 bg-transparent"
-                  }
-                  id={name}
-                  name={name}
-                  defaultCountry="NG"
-                  placeholder={placeholder}
-                  disabled={true}
-                  value={form.values[name]}
-                  onChange={(value) => form.handleChange({ target: { value } })}
-                />
-              ) : (
+              {{
+                phone: (
+                  <PhoneInputWithCountrySelect
+                    className={
+                      variation == "primary"
+                        ? "primary"
+                        : "secondary" + " !outline-0 bg-transparent"
+                    }
+                    id={name}
+                    name={name}
+                    defaultCountry="NG"
+                    placeholder={placeholder}
+                    disabled={true}
+                    value={form.values[name]}
+                    onChange={(value) =>
+                      form.handleChange({ target: { value } })
+                    }
+                  />
+                ),
+                textarea: (
+                  <textarea
+                    rows={5}
+                    id={name}
+                    name={name}
+                    className={variation == "primary" ? "primary" : "secondary"}
+                    placeholder={placeholder}
+                    disabled={disabled}
+                    value={form.values[name]}
+                    onChange={form.handleChange}
+                    onKeyDown={(e) => {
+                      if (e.key == "Enter") {
+                        form.handleSubmit();
+                      }
+                    }}
+                  ></textarea>
+                ),
+              }[type] || (
                 <input
                   id={name}
                   min={min}
                   max={max}
+                  step={step}
                   type={type}
                   name={name}
                   className={variation == "primary" ? "primary" : "secondary"}
@@ -118,21 +144,42 @@ const Input = (props: InputProps) => {
           )}
           {value !== undefined && (
             <>
-              {type == "phone" ? (
-                <PhoneInputWithCountrySelect
-                  value={value as E164Number}
-                  defaultCountry="NG"
-                  required={required}
-                  disabled={disabled}
-                  placeholder={placeholder}
-                  onChange={(value) => {
-                    if (onChange) onChange(value as string);
-                  }}
-                />
-              ) : (
+              {{
+                phone: (
+                  <PhoneInputWithCountrySelect
+                    value={value as E164Number}
+                    defaultCountry="NG"
+                    required={required}
+                    disabled={disabled}
+                    placeholder={placeholder}
+                    onChange={(value) => {
+                      if (onChange) onChange(value as string);
+                    }}
+                  />
+                ),
+                textarea: (
+                  <textarea
+                    rows={5}
+                    value={value}
+                    required={required}
+                    disabled={disabled}
+                    placeholder={placeholder}
+                    className={variation == "primary" ? "primary" : "secondary"}
+                    onKeyDown={(e) => {
+                      if (e.key == "Enter" && onEnter) {
+                        onEnter();
+                      }
+                    }}
+                    onChange={(e) => {
+                      if (onChange) onChange(e.target.value);
+                    }}
+                  ></textarea>
+                ),
+              }[type] || (
                 <input
                   min={min}
                   max={max}
+                  step={step}
                   value={value}
                   required={required}
                   disabled={disabled}

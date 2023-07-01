@@ -66,3 +66,10 @@ export interface EditBudgetRequest {
   totalExpenditure: number;
   projectedIncome: number;
 }
+
+export interface CreateIssueRequest {
+  title: string;
+  body: string;
+  labels: Array<string>;
+
+}

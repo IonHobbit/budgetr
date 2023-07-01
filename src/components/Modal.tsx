@@ -27,19 +27,19 @@ const Modal: React.FC<ModalProps> = (props) => {
 
     switch (size) {
       case "x-small":
-        classes.push("w-[340px] lg:w-[340px]");
+        classes.push("w-[320px] xs:w-[360px] sm:w-[340px]");
         break;
       case "small":
-        classes.push("w-[340px] lg:w-[448px]");
+        classes.push("w-[320px] xs:w-[360px] sm:w-[448px]");
         break;
       case "medium":
-        classes.push("w-[200px] lg:w-[640px]");
+        classes.push("w-[320px] xs:w-[360px] lg:w-[640px]");
         break;
       case "large":
-        classes.push("w-[200px] lg:w-[768px]");
+        classes.push("w-[320px] xs:w-[360px] lg:w-[768px]");
         break;
       case "x-large":
-        classes.push("w-[200px] lg:w-[896px]");
+        classes.push("w-[320px] xs:w-[360px] lg:w-[896px]");
         break;
     }
 
@@ -47,12 +47,12 @@ const Modal: React.FC<ModalProps> = (props) => {
   }, [padded, size]);
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 flex items-center justify-center">
+    <div className="fixed inset-0 flex items-center justify-center overflow-y-auto">
       <div
-        className="w-screen h-screen bg-black bg-opacity-50"
+        className="w-screen h-screen bg-black bg-opacity-50 fixed"
         onClick={hideModal}
       />
-      <div className="absolute">
+      <div className="absolute mt-20 lg:mt-0">
         <div className={injectedClasses}>{props.children}</div>
       </div>
     </div>,

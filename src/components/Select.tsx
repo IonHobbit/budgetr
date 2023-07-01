@@ -87,9 +87,12 @@ const Select = (props: SelectProps) => {
                 value={form.values[name]}
                 onChange={form.handleChange}
               >
+                <option value="" disabled>
+                  Select an option
+                </option>
                 {options.map(({ key, value }) => {
                   return (
-                    <option key={key} value={key}>
+                    <option className="capitalize" key={key} value={key}>
                       {value}
                     </option>
                   );
@@ -107,9 +110,12 @@ const Select = (props: SelectProps) => {
                   if (onChange) onChange(e.target.value);
                 }}
               >
+                <option value="" disabled>
+                  Select an option
+                </option>
                 {options.map(({ key, value }) => {
                   return (
-                    <option key={key} value={key}>
+                    <option className="capitalize" key={key} value={key}>
                       {value}
                     </option>
                   );

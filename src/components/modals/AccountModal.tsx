@@ -32,6 +32,7 @@ import helperUtil from "@/utils/helper.util";
 import Image from "next/image";
 import { HexColorInput, HexColorPicker } from "react-colorful";
 import { selectUser } from "@/store/slices/userSlice";
+import { Icon } from "@iconify/react";
 
 type AccountModalProps = {
   account?: Account;
@@ -137,7 +138,8 @@ const AccountModal: React.FC<AccountModalProps> = ({ account }) => {
 
   return (
     <Modal size="x-small" spacing={true}>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center space-x-2">
+        <Icon width={24} icon="mingcute:bank-card-line" />
         <h5>{account ? "Edit" : "Add"} Bank Account</h5>
       </div>
 

@@ -90,6 +90,7 @@ const BudgetsPage: NextPageWithLayout = () => {
           </div>
           <div className="flex flex-col space-y-3 items-center lg:hidden">
             <Icon
+              onClick={() => showModal(<CategoryModal />)}
               width={80}
               className="text-primary"
               icon="solar:folder-favourite-bookmark-bold-duotone"

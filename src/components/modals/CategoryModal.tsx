@@ -28,6 +28,7 @@ import {
 import { DUPLICATE_ENTITY } from "@/constants/errorMessages";
 import useDispatcher from "@/hooks/useDispatcher";
 import { selectUser } from "@/store/slices/userSlice";
+import { Icon } from "@iconify/react";
 
 type CategoryModalProps = {
   category?: Category;
@@ -118,7 +119,8 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ category, type }) => {
 
   return (
     <Modal size="x-small" spacing={true}>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center space-x-2">
+        <Icon width={24} icon="solar:folder-favourite-bookmark-bold-duotone" />
         <h5>{category ? "Edit" : "Add New"} Category</h5>
       </div>
 

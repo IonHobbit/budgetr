@@ -27,3 +27,9 @@ export const BUDGET_CATEGORIES = [
   BudgetCategory.EXPENSES,
   BudgetCategory.INCOME,
 ]
+
+export const ISSUE_LABELS = [
+  { id: 'bug', name: 'Bug' },
+  { id: 'feedback', name: 'Feedback' },
+  { id: 'improvement', name: 'Improvement' },
+]
