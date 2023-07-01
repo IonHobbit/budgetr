@@ -1,5 +1,5 @@
 import useAuth from "@/hooks/useAuth";
-import { logout, setUser } from "@/store/slices/userSlice";
+import { logout } from "@/store/slices/userSlice";
 import storageUtil, { StorageKey } from "@/utils/storage.util";
 import { useRouter } from "next/router";
 import { useEffect, FC, ReactNode, useState } from "react";

@@ -15,7 +15,6 @@ import useDispatcher from "@/hooks/useDispatcher";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import { useModal } from "@/components/ModalManager";
-import CategoryModal from "@/components/modals/CategoryModal";
 import TransactionModal from "@/components/modals/TransactionModal";
 
 import routes from "@/constants/routes";
@@ -49,12 +48,6 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children, pageName }) => {
         <title>{pageTitle}</title>
         <meta property="og:title" content={pageTitle} key="title" />
       </Head>
-      {/* <div
-        onClick={() => showModal(<CategoryModal />)}
-        className="mobile-hidden lg:!grid fixed bottom-5 right-24 place-items-center cursor-pointer bg-primary text-white rounded-full w-14 h-14"
-      >
-        <Icon width={28} icon="solar:folder-favourite-bookmark-bold-duotone" />
-      </div> */}
       <div
         onClick={() => showModal(<TransactionModal />)}
         className="mobile-hidden lg:!grid fixed bottom-5 right-5 place-items-center cursor-pointer bg-primary text-white rounded-full w-14 h-14"

@@ -29,6 +29,4 @@ const routes: Route[] = [
   },
 ];
 
-export const dashboardRoutes = [routes[0]]
-
 export default routes;

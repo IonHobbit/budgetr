@@ -4,10 +4,9 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Route } from "@/constants/routes";
 import ResizedImage from "./ResizedImage";
-import CategoryModal from "./modals/CategoryModal";
-import TransactionModal from "./modals/TransactionModal";
 import { useModal } from "./ModalManager";
 import IssueModal from "./modals/IssueModal";
+import TransactionModal from "./modals/TransactionModal";
 
 type NavigationProps = {
   mobile?: boolean;
