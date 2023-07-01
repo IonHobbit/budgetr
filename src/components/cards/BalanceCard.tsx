@@ -45,7 +45,7 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
                 </p>
                 <p className="text-[10px]">
                   {helperUtil.currencyConverter(
-                    type == "balance" ? account.balance : account.totals[type]
+                    type == "balance" ? account.balance : account.totals?.[type] || 0
                   )}
                 </p>
               </div>

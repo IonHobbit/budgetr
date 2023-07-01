@@ -212,13 +212,13 @@ const DashboardPage: NextPageWithLayout = () => {
           <BalanceCard
             title="Total Income"
             icon="solar:money-bag-bold-duotone"
-            balance={balances?.income}
+            balance={balances.income}
             type="income"
           />
           <BalanceCard
             title="Total Expenses"
             icon="solar:banknote-2-bold-duotone"
-            balance={balances?.expenses}
+            balance={balances.expenses}
             type="expenses"
           />
           <div className="bg-secondary p-6 rounded w-full text-white space-y-6">
