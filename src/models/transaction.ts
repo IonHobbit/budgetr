@@ -7,6 +7,12 @@ export enum TransactionType {
   TRANSFER = "transfer"
 }
 
+export interface EncrpytedData {
+  id: string;
+  data?: string;
+  timestamp: Timestamp;
+}
+
 export interface ITransaction {
   id: string;
   amount: number;

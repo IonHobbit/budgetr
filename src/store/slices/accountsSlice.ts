@@ -3,8 +3,9 @@ import { RootState } from '../rootReducer';
 import { fetchFirestoreData } from '@/utils/firebase.util';
 import { resetAll } from '../rootAction';
 import { Account, IAccount, IBank } from '@/models/account';
-import { ITransaction, Transaction, TransactionType } from '@/models/transaction';
+import { EncrpytedData, ITransaction, Transaction, TransactionType } from '@/models/transaction';
 import helperUtil from '@/utils/helper.util';
+import { decryptDataWithKey } from '@/utils/encryption.util';
 
 interface AccountsSliceState {
   data: Account[];
@@ -58,7 +59,12 @@ export const fetchAccounts = createAsyncThunk(
         response!.map(async (account: IAccount) => {
           const transactionResponse = await fetchFirestoreData(`Users/${userID}/Accounts/${account.id}/Transactions`)
           const transactions = transactionResponse
-            ?.map((transaction: ITransaction) => new Transaction(transaction, account))
+            ?.map((transaction: EncrpytedData) => {
+              const data = decryptDataWithKey(userID, transaction.data!) as object
+              delete transaction.data;
+
+              return new Transaction({ ...transaction, ...data } as unknown as ITransaction, account)
+            })
             .sort((a: Transaction, b: Transaction) => helperUtil.timestampToDateConverter(b.date).getTime() - helperUtil.timestampToDateConverter(a.date).getTime()) || [];
           const expenses = transactions
             .filter(

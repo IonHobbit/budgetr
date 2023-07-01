@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import helperUtil from './helper.util';
 
 const ENCRYPTION_ALGORITHM = 'aes-256-cbc';
 const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_KEY!
@@ -22,5 +23,23 @@ const decryptData = (encryptedData: string): string | object => {
   return JSON.parse(decryptedData);
 }
 
-export { encryptData, decryptData };
+const encryptDataWithKey = (key: string, data: string | object): string => {
+  const dataString = JSON.stringify(data);
+  const iv = crypto.randomBytes(IV_LENGTH);
+  const cipher = crypto.createCipheriv(ENCRYPTION_ALGORITHM, helperUtil.extendUID(key), iv);
+  let encryptedData = cipher.update(dataString, 'utf8', 'hex');
+  encryptedData += cipher.final('hex');
+  return `${iv.toString('hex')}:${encryptedData}`;
+}
+
+const decryptDataWithKey = (key: string, encryptedData: string): string | object => {
+  const [ivString, dataString] = encryptedData.split(':');
+  const iv = Buffer.from(ivString, 'hex');
+  const decipher = crypto.createDecipheriv(ENCRYPTION_ALGORITHM, helperUtil.extendUID(key), iv);
+  let decryptedData = decipher.update(dataString, 'hex', 'utf8');
+  decryptedData += decipher.final('utf8');
+  return JSON.parse(decryptedData);
+}
+
+export { encryptData, decryptData, encryptDataWithKey, decryptDataWithKey };
 

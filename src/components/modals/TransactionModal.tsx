@@ -87,9 +87,10 @@ const TransactionModal: React.FC = () => {
         notification.success("Transaction recorded");
         dispatcher(fetchAccounts(user!.id));
       }
-      setLoading(false);
       hideModal();
     } catch (error) {
+      console.error(error);
+    } finally {
       setLoading(false);
     }
   };
@@ -265,15 +266,28 @@ const TransactionModal: React.FC = () => {
           form={transactionForm}
           placeholder="1,000,000"
         />
-        {transactionForm.values.type !== TransactionType.INCOME && (
-          <Input
-            title="On What?"
-            name="description"
-            variation="secondary"
-            form={transactionForm}
-            placeholder="eg Snacks, Apple and Oranges"
-          />
-        )}
+        <Input
+          title={`
+        ${
+          transactionForm.values.type == TransactionType.INCOME
+            ? "Where from?"
+            : ""
+        }
+        ${
+          transactionForm.values.type == TransactionType.EXPENSE
+            ? "On What?"
+            : ""
+        }
+        ${
+          transactionForm.values.type == TransactionType.TRANSFER
+            ? "Because?"
+            : ""
+        }`}
+          name="description"
+          variation="secondary"
+          form={transactionForm}
+          placeholder="eg Snacks, Apple and Oranges"
+        />
         <Input
           title="When?"
           name="date"

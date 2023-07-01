@@ -116,4 +116,9 @@ const generateRandomHexColor = () => {
   return color;
 }
 
-export default { weekdayNormalizer, readableDateFormatter, dateFormatter, monthFormatter, timestampToDateConverter, graphDataLabelFormatter, dateToMillisecondsConverter, dateToTimestampConverter, randomColorGenerator, stampToDate, transformToSelectOptions, currencyConverter, normalizeCamelCase, generateRandomHexColor }
+const extendUID = (uid: string) => {
+  const longform = uid + uid;
+  return longform.substring(0, 32)
+}
+
+export default { weekdayNormalizer, readableDateFormatter, dateFormatter, monthFormatter, timestampToDateConverter, graphDataLabelFormatter, dateToMillisecondsConverter, dateToTimestampConverter, randomColorGenerator, stampToDate, transformToSelectOptions, currencyConverter, normalizeCamelCase, generateRandomHexColor, extendUID }

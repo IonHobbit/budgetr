@@ -14,7 +14,6 @@ import { selectBudgets } from "@/store/slices/budgetsSlice";
 import helperUtil from "@/utils/helper.util";
 
 import Table from "@/components/Table";
-import EmptyState from "@/components/EmptyState";
 
 import { Account } from "@/models/account";
 import { Budget, IBudgetItem } from "@/models/budget";
@@ -270,11 +269,11 @@ const DashboardPage: NextPageWithLayout = () => {
                                     )}
                                   </p>
                                 )}
-                                <p className="text-xs">
+                                <p className="text-xs flex items-center">
                                   {helperUtil.currencyConverter(
                                     transactionCosts
                                   )}{" "}
-                                  <span className="text-[10px]">
+                                  <span className="text-[10px] ml-0.5">
                                     [{percentageSpent}%]
                                   </span>
                                 </p>

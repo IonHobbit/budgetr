@@ -1,6 +1,7 @@
 import { CreateTransactionRequest } from "@/interfaces/requests.interface"
 import { Account } from "@/models/account"
 import { TransactionType } from "@/models/transaction"
+import { encryptDataWithKey } from "@/utils/encryption.util"
 import { updateFirestoreDocument, writeToFirestore } from "@/utils/firebase.util"
 import notification from "@/utils/notification"
 
@@ -20,7 +21,7 @@ export const recordTransaction = async (userID: string, account: Account, transa
     return false
   }
 
-  const response = await writeToFirestore(`Users/${userID}/Accounts/${account.id}/Transactions`, transactionPayload)
+  const response = await writeToFirestore(`Users/${userID}/Accounts/${account.id}/Transactions`, { data: encryptDataWithKey(userID, transactionPayload) })
 
   if (transaction.type == TransactionType.EXPENSE) {
     await debitAccount(userID, account, transaction.amount)
