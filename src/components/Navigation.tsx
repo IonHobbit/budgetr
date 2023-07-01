@@ -30,7 +30,7 @@ const Navigation: React.FC<NavigationProps> = ({ mobile, routes }) => {
       className={`${
         mobile
           ? "flex items-center w-full justify-between text-primary"
-          : "space-y-4 flex flex-col"
+          : "space-y-4 flex flex-col h-screen relative"
       }`}
     >
       <Link href="/" className="mobile-hidden">
@@ -78,7 +78,7 @@ const Navigation: React.FC<NavigationProps> = ({ mobile, routes }) => {
         </>
       )}
       <div
-        className="flex items-center font-header text-white rounded transition-all bg-primary p-4 py-3 space-x-3 cursor-pointer mobile-hidden"
+        className="absolute bottom-5 w-full items-center font-header text-white rounded transition-all bg-primary p-4 py-3 space-x-3 cursor-pointer mobile-hidden lg:!flex"
         onClick={() => showModal(<IssueModal />)}
       >
         <Icon icon="solar:chat-line-bold-duotone" width={20} />
