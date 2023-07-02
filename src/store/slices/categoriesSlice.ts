@@ -55,6 +55,7 @@ export const fetchCategories = createAsyncThunk(
 export const { setCategories } = CategoriesSlice.actions;
 
 // Selectors for accessing data from the state
+export const selectCategoriesState = (state: RootState) => state.categories;
 export const selectCategories = (state: RootState) => state.categories.data;
 export const selectExpenseCategories = (state: RootState) => state.categories.data.filter((category: Category) => category.type === CategoryType.EXPENSE);
 export const selectCategoriesLoading = (state: RootState) => state.categories.loading;

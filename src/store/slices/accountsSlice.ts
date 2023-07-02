@@ -109,6 +109,7 @@ export const fetchAccounts = createAsyncThunk(
 export const { setBanks } = AccountsSlice.actions;
 
 // Selectors for accessing data from the state
+export const selectAccountsState = (state: RootState) => state.accounts;
 export const selectBanks = (state: RootState) => state.accounts.banks || [];
 export const selectAccounts = (state: RootState) => state.accounts.data;
 export const selectAccountsLoading = (state: RootState) => state.accounts.loading;
