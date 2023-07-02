@@ -55,6 +55,7 @@ export const fetchBudgets = createAsyncThunk(
 export const { setBudgets } = BudgetsSlice.actions;
 
 // Selectors for accessing data from the state
+export const selectBudgetsState = (state: RootState) => state.budgets;
 export const selectBudgets = (state: RootState) => state.budgets.data;
 export const selectBudgetsLoading = (state: RootState) => state.budgets.loading;
 export const selectBudgetsError = (state: RootState) => state.budgets.error;

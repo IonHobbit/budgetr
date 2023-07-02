@@ -9,8 +9,8 @@ import useMeta from "@/hooks/useMeta";
 import useLayout from "@/hooks/useLayout";
 
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { selectAccounts } from "@/store/slices/accountsSlice";
-import { selectBudgets } from "@/store/slices/budgetsSlice";
+import { selectAccountsState } from "@/store/slices/accountsSlice";
+import { selectBudgetsState } from "@/store/slices/budgetsSlice";
 import helperUtil from "@/utils/helper.util";
 
 import Table from "@/components/Table";
@@ -21,16 +21,23 @@ import { Transaction, TransactionType } from "@/models/transaction";
 import CategoryModal from "@/components/modals/CategoryModal";
 import { useModal } from "@/components/ModalManager";
 import routes from "@/constants/routes";
-import { selectCategories } from "@/store/slices/categoriesSlice";
+import { selectCategoriesState } from "@/store/slices/categoriesSlice";
 import AccountModal from "@/components/modals/AccountModal";
 import BudgetModal from "@/components/modals/BudgetModal";
 import BalanceCard from "@/components/cards/BalanceCard";
+import { Loader } from "@/components/Loader";
 
 const DashboardPage: NextPageWithLayout = () => {
   const user = useSelector((state: RootState) => selectUser(state));
-  const budgets = useSelector((state: RootState) => selectBudgets(state));
-  const accounts = useSelector((state: RootState) => selectAccounts(state));
-  const categories = useSelector((state: RootState) => selectCategories(state));
+  const { data: budgets, loading: budgetsLoader } = useSelector(
+    (state: RootState) => selectBudgetsState(state)
+  );
+  const { data: accounts, loading: accountsLoader } = useSelector(
+    (state: RootState) => selectAccountsState(state)
+  );
+  const { data: categories, loading: categoriesLoader } = useSelector(
+    (state: RootState) => selectCategoriesState(state)
+  );
 
   const tasks: Array<{
     name: "categories" | "accounts" | "budgets";
@@ -84,10 +91,21 @@ const DashboardPage: NextPageWithLayout = () => {
       categories: categories && categories.length > 0,
     };
 
+    if (budgetsLoader || accountsLoader || categoriesLoader) {
+      return [];
+    }
+
     return tasks.filter((task) => {
       return !completedTasks[task.name];
     });
-  }, [categories, accounts, budgets]);
+  }, [
+    categories,
+    accounts,
+    budgets,
+    budgetsLoader,
+    categoriesLoader,
+    accountsLoader,
+  ]);
 
   const currentBudget = useMemo(() => {
     const currentTime =
@@ -167,7 +185,7 @@ const DashboardPage: NextPageWithLayout = () => {
   return (
     <>
       <div className="py-6 space-y-6 h-full overflow-y-auto">
-        <div className="flex flex-col space-y-3 lg:space-y-0 lg:flex-row items-center justify-between">
+        <div className="flex flex-col space-y-3 lg:space-y-0 lg:flex-row lg:items-center justify-between">
           <div className="flex-shrink-0">
             <Greeting />
             <p>Let's see how much you have spent today</p>
@@ -177,7 +195,7 @@ const DashboardPage: NextPageWithLayout = () => {
               <p className="text-xs">
                 Here's a couple of things to get you started
               </p>
-              <div className="flex items-center justify-end space-x-4 overflow-auto w-full">
+              <div className="flex items-center lg:justify-end space-x-4 overflow-auto w-full">
                 {setupTasks.map((tasks, index) => {
                   return (
                     <React.Fragment key={index}>
@@ -221,82 +239,91 @@ const DashboardPage: NextPageWithLayout = () => {
             type="expenses"
           />
           <div className="bg-secondary p-6 rounded w-full text-white space-y-6">
-            {currentBudget ? (
-              <>
-                <h3>{currentBudget.title} Budget</h3>
-                <div className="space-y-4 max-h-[680px] overflow-auto">
-                  {currentBudget.expenses.map((budgetItem: IBudgetItem) => {
-                    const categoryTransactions = transactions.expenses.filter(
-                      (transaction: Transaction) =>
-                        transaction.category == budgetItem.category
-                    );
-                    const transactionCosts = categoryTransactions.reduce(
-                      (total, transaction) => +total + +transaction.amount,
-                      0
-                    );
-                    const percentageSpent = Math.floor(
-                      (transactionCosts / budgetItem.amount) * 100
-                    );
-                    const category = getCategory(budgetItem.category);
-
-                    return (
-                      <React.Fragment key={budgetItem.category}>
-                        <div
-                          title={`${percentageSpent}% of ${category?.name} allocation spent`}
-                          className="flex flex-col w-full space-y-2"
-                        >
-                          <p>{category?.name}</p>
-                          <div className="flex space-x-2">
-                            <div className="relative bg-background flex items-center pr-2 h-8 w-full overflow-hidden">
-                              <div
-                                className="absolute h-full flex items-center justify-end pr-1"
-                                style={{
-                                  width: `${
-                                    percentageSpent >= 100
-                                      ? 100
-                                      : percentageSpent
-                                  }%`,
-                                  backgroundColor:
-                                    percentageSpent >= 100
-                                      ? "#A50000"
-                                      : "#29A9CE",
-                                }}
-                              >
-                                {percentageSpent >= 70 && (
-                                  <p className="text-xs pl-2 mr-auto">
-                                    {helperUtil.currencyConverter(
-                                      budgetItem.amount
-                                    )}
-                                  </p>
-                                )}
-                                <p className="text-xs flex items-center">
-                                  {helperUtil.currencyConverter(
-                                    transactionCosts
-                                  )}{" "}
-                                  <span className="text-[10px] ml-0.5">
-                                    [{percentageSpent}%]
-                                  </span>
-                                </p>
-                              </div>
-                              {percentageSpent < 70 && (
-                                <p className=" ml-auto text-xs">
-                                  {helperUtil.currencyConverter(
-                                    budgetItem.amount
-                                  )}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </React.Fragment>
-                    );
-                  })}
-                </div>
-              </>
-            ) : (
+            {budgetsLoader ? (
               <div className="grid place-items-center h-full">
-                No active budget
+                <Loader size="large" />
               </div>
+            ) : (
+              <>
+                {currentBudget ? (
+                  <>
+                    <h3>{currentBudget.title} Budget</h3>
+                    <div className="space-y-4 max-h-[680px] overflow-auto">
+                      {currentBudget.expenses.map((budgetItem: IBudgetItem) => {
+                        const categoryTransactions =
+                          transactions.expenses.filter(
+                            (transaction: Transaction) =>
+                              transaction.category == budgetItem.category
+                          );
+                        const transactionCosts = categoryTransactions.reduce(
+                          (total, transaction) => +total + +transaction.amount,
+                          0
+                        );
+                        const percentageSpent = Math.floor(
+                          (transactionCosts / budgetItem.amount) * 100
+                        );
+                        const category = getCategory(budgetItem.category);
+
+                        return (
+                          <React.Fragment key={budgetItem.category}>
+                            <div
+                              title={`${percentageSpent}% of ${category?.name} allocation spent`}
+                              className="flex flex-col w-full space-y-2"
+                            >
+                              <p>{category?.name}</p>
+                              <div className="flex space-x-2">
+                                <div className="relative bg-background flex items-center pr-2 h-8 w-full overflow-hidden">
+                                  <div
+                                    className="absolute h-full flex items-center justify-end pr-1"
+                                    style={{
+                                      width: `${
+                                        percentageSpent >= 100
+                                          ? 100
+                                          : percentageSpent
+                                      }%`,
+                                      backgroundColor:
+                                        percentageSpent >= 100
+                                          ? "#A50000"
+                                          : "#29A9CE",
+                                    }}
+                                  >
+                                    {percentageSpent >= 70 && (
+                                      <p className="text-xs pl-2 mr-auto">
+                                        {helperUtil.currencyConverter(
+                                          budgetItem.amount
+                                        )}
+                                      </p>
+                                    )}
+                                    <p className="text-xs flex items-center">
+                                      {helperUtil.currencyConverter(
+                                        transactionCosts
+                                      )}{" "}
+                                      <span className="text-[10px] ml-0.5">
+                                        [{percentageSpent}%]
+                                      </span>
+                                    </p>
+                                  </div>
+                                  {percentageSpent < 70 && (
+                                    <p className=" ml-auto text-xs">
+                                      {helperUtil.currencyConverter(
+                                        budgetItem.amount
+                                      )}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </React.Fragment>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  <div className="grid place-items-center h-full">
+                    No active budget
+                  </div>
+                )}
+              </>
             )}
           </div>
           <div className="bg-secondary p-6 rounded w-full text-white space-y-4 lg:col-span-2">
