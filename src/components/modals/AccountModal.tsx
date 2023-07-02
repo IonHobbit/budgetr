@@ -188,7 +188,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ account }) => {
             form={accountForm}
           />
         )}
-        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2 h-48 overflow-y-hidden">
           <p className="col-span-2 text-sm">Account Color</p>
           <div className="space-y-1.5">
             <HexColorPicker
@@ -197,9 +197,9 @@ const AccountModal: React.FC<AccountModalProps> = ({ account }) => {
               onChange={setColorCode}
             />
           </div>
-          <div className="h-full w-full flex flex-col justify-between space-y-3">
+          <div className="h-full w-full flex flex-col justify-between">
             <div
-              className="w-full h-[80%] rounded-lg"
+              className="w-full h-[70%] rounded-lg"
               style={{ backgroundColor: colorCode }}
             />
             <HexColorInput
