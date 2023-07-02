@@ -1,12 +1,12 @@
 import { useFormik } from "formik";
 import Input from "../Input";
 import Modal from "../Modal";
-import {
-  accountValidationSchema,
-  issueValidationSchema,
-} from "@/utils/validation-schema.util";
+import { issueValidationSchema } from "@/utils/validation-schema.util";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/rootReducer";
+import { selectUser } from "@/store/slices/userSlice";
 import Button from "../Button";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import notification from "@/utils/notification";
 import { useModal } from "../ModalManager";
 import Select from "../Select";
@@ -18,6 +18,8 @@ import { GENERIC_ERROR } from "@/constants/errorMessages";
 import { Icon } from "@iconify/react";
 
 const IssueModal: React.FC = () => {
+  const user = useSelector((state: RootState) => selectUser(state));
+
   const [loading, setLoading] = useState(false);
 
   const { hideModal } = useModal();
@@ -27,7 +29,7 @@ const IssueModal: React.FC = () => {
 
     const _payload: CreateIssueRequest = {
       title: payload.title,
-      body: payload.body,
+      body: `${payload.body} - from: ${user?.firstName} ${user?.lastName} - ${user?.email}`,
       labels: [payload.label],
     };
 
