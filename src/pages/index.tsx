@@ -26,6 +26,7 @@ import AccountModal from "@/components/modals/AccountModal";
 import BudgetModal from "@/components/modals/BudgetModal";
 import BalanceCard from "@/components/cards/BalanceCard";
 import { Loader } from "@/components/Loader";
+import TransactionModal from "@/components/modals/TransactionModal";
 
 const DashboardPage: NextPageWithLayout = () => {
   const user = useSelector((state: RootState) => selectUser(state));
@@ -239,7 +240,7 @@ const DashboardPage: NextPageWithLayout = () => {
             type="expenses"
           />
           <div className="bg-secondary p-6 rounded w-full text-white space-y-6">
-            {budgetsLoader ? (
+            {budgetsLoader && !currentBudget ? (
               <div className="grid place-items-center h-full">
                 <Loader size="large" />
               </div>
@@ -247,7 +248,20 @@ const DashboardPage: NextPageWithLayout = () => {
               <>
                 {currentBudget ? (
                   <>
-                    <h3>{currentBudget.title} Budget</h3>
+                    <div
+                      className="flex items-center space-x-2 group cursor-pointer"
+                      onClick={() =>
+                        showModal(<BudgetModal budget={currentBudget} />)
+                      }
+                    >
+                      <h3 className="transition-all">
+                        {currentBudget.title} Budget
+                      </h3>
+                      <Icon
+                        className="invisible translate-x-0 group-hover:visible animate-bounce group-hover:translate-x-12 transition-all "
+                        icon="solar:circle-top-up-linear"
+                      />
+                    </div>
                     <div className="space-y-4 max-h-[680px] overflow-auto">
                       {currentBudget.expenses.map((budgetItem: IBudgetItem) => {
                         const categoryTransactions =
@@ -333,6 +347,9 @@ const DashboardPage: NextPageWithLayout = () => {
                 data={transactions.latest}
                 emptyMessage={"No transactions"}
                 exclude={["id", "date", "description", "timestamp"]}
+                onClick={(transaction: Transaction) =>
+                  showModal(<TransactionModal transaction={transaction} />)
+                }
               />
             </div>
           </div>

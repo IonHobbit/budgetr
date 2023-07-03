@@ -135,6 +135,9 @@ const TransactionsPage: NextPageWithLayout = () => {
                       : "receivingAccount",
                   ]}
                   emptyMessage="No transactions found"
+                  onClick={(transaction: Transaction) =>
+                    showModal(<TransactionModal transaction={transaction} />)
+                  }
                 />
               </div>
             </div>
