@@ -13,6 +13,16 @@ export interface CreateTransactionRequest {
   receivingAccount?: Account
 }
 
+export interface EditTransactionRequest {
+  id: string,
+  amount: number,
+  category?: string,
+  date: Timestamp | string,
+  description?: string,
+  type: TransactionType,
+  receivingAccount?: Account
+}
+
 export interface CreateCategoryRequest {
   name: string;
   type: CategoryType;

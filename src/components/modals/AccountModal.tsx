@@ -209,14 +209,19 @@ const AccountModal: React.FC<AccountModalProps> = ({ account }) => {
             />
           </div>
         </div>
-        <Button loading={loading}>
-          {account ? "Update" : "Create"} Account
-        </Button>
-        {account && (
-          <Button onClick={deleteHandler} loading={loading} variation="errored">
-            Delete Account
-          </Button>
-        )}
+        <div className="flex items-center space-x-4 justify-between">
+          {account && (
+            <Button
+              onClick={deleteHandler}
+              loading={loading}
+              variation="errored"
+              className="w-1/3"
+            >
+              Delete
+            </Button>
+          )}
+          <Button loading={loading}>{account ? "Update" : "Create"}</Button>
+        </div>
       </form>
     </Modal>
   );
