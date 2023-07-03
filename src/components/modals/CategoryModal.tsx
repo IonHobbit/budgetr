@@ -143,14 +143,19 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ category, type }) => {
           options={categoryTypes}
           form={categoryForm}
         />
-        <Button loading={loading}>
-          {category ? "Update" : "Save"} Category
-        </Button>
-        {category && (
-          <Button onClick={deleteHandler} loading={loading} variation="errored">
-            Delete Category
-          </Button>
-        )}
+        <div className="flex items-center space-x-4 justify-between">
+          {category && (
+            <Button
+              onClick={deleteHandler}
+              loading={loading}
+              variation="errored"
+              className="w-1/3"
+            >
+              Delete
+            </Button>
+          )}
+          <Button loading={loading}>{category ? "Update" : "Save"}</Button>
+        </div>
       </form>
     </Modal>
   );
