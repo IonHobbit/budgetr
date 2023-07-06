@@ -3,6 +3,7 @@ import { RootState } from "@/store/rootReducer";
 import { selectAccounts } from "@/store/slices/accountsSlice";
 import helperUtil from "@/utils/helper.util";
 import { Icon } from "@iconify/react";
+import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
 type BalanceCardProps = {
@@ -20,6 +21,36 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
 }) => {
   const accounts = useSelector((state: RootState) => selectAccounts(state));
 
+  const [selectedAccounts, setSelectedAccounts] = useState<Array<Account>>([]);
+
+  const findAccountIndex = (account: Account) => {
+    return selectedAccounts.findIndex(
+      (_account: Account) => _account.id == account.id
+    );
+  };
+
+  const selectAccount = (account: Account) => {
+    const accountIndex = findAccountIndex(account);
+
+    if (accountIndex >= 0) {
+      const updatedAccounts = [...selectedAccounts];
+      updatedAccounts.splice(accountIndex, 1);
+
+      setSelectedAccounts(updatedAccounts);
+    } else {
+      setSelectedAccounts([...selectedAccounts, account]);
+    }
+  };
+
+  const displayedBalance = useMemo(() => {
+    const removedAccountsBalance = selectedAccounts.reduce((total, account) => {
+      const balance =
+        type == "balance" ? account.balance : account.totals[type];
+      return +total + +balance;
+    }, 0);
+    return balance - removedAccountsBalance;
+  }, [balance, selectedAccounts]);
+
   return (
     <div className="bg-secondary p-4 rounded flex flex-col w-full text-white space-y-2">
       <div className="flex items-center justify-between">
@@ -27,14 +58,17 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
         <Icon width={30} className="text-primary" icon={icon} />
       </div>
       <div className="flex flex-col justify-center h-full space-y-2">
-        <h2>{helperUtil.currencyConverter(balance)}</h2>
+        <h2>{helperUtil.currencyConverter(displayedBalance)}</h2>
         <div className="flex items-center space-x-3 w-full overflow-x-auto">
           {accounts.map((account: Account) => {
             return (
               <div
                 key={account.id}
                 title={account.name}
-                className="flex items-center space-x-1 relative group cursor-default"
+                onClick={() => selectAccount(account)}
+                className={`flex items-center space-x-1 relative group cursor-pointer overflow-visible ${
+                  findAccountIndex(account) >= 0 && "line-through"
+                }`}
               >
                 <div
                   className="rounded-full w-1.5 h-1.5"
@@ -45,7 +79,9 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
                 </p>
                 <p className="text-[10px]">
                   {helperUtil.currencyConverter(
-                    type == "balance" ? account.balance : account.totals?.[type] || 0
+                    type == "balance"
+                      ? account.balance
+                      : account.totals?.[type] || 0
                   )}
                 </p>
               </div>

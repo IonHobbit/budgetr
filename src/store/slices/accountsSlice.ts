@@ -99,7 +99,7 @@ export const fetchAccounts = createAsyncThunk(
           return { ...account, transactions, expenses, income, transfers, totals }
         })
       )
-      return accounts;
+      return accounts.sort((a, b) => helperUtil.timestampToDateConverter(b.timestamp).getTime() - helperUtil.timestampToDateConverter(a.timestamp).getTime());
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);
     }

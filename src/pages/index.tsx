@@ -108,18 +108,6 @@ const DashboardPage: NextPageWithLayout = () => {
     accountsLoader,
   ]);
 
-  const currentBudget = useMemo(() => {
-    const currentTime =
-      new Date(new Date().toDateString()).getTime() + 1000 * 60 * 60;
-
-    return budgets.find((budget: Budget) => {
-      return (
-        new Date(budget.startDate).getTime() <= currentTime &&
-        new Date(budget.endDate).getTime() > currentTime
-      );
-    });
-  }, [budgets]);
-
   const transactions = useMemo(() => {
     const allTransactions = accounts.reduce(
       (transactions: Transaction[], account: Account) => {
@@ -155,6 +143,47 @@ const DashboardPage: NextPageWithLayout = () => {
 
     return { expenses, income, transfers, latest };
   }, [accounts]);
+
+  const currentBudget = useMemo(() => {
+    const currentTime =
+      new Date(new Date().toDateString()).getTime() + 1000 * 60 * 60;
+
+    const budget = budgets.find((budget: Budget) => {
+      return (
+        new Date(budget.startDate).getTime() <= currentTime &&
+        new Date(budget.endDate).getTime() > currentTime
+      );
+    });
+
+    const expenses =
+      budget?.expenses
+        .map((expense: IBudgetItem) => {
+          const expenseCosts = transactions.expenses
+            .filter(
+              (transaction: Transaction) =>
+                transaction.category == expense.category &&
+                helperUtil
+                  .timestampToDateConverter(transaction.date)
+                  .getTime() >= new Date(budget.startDate).getTime() &&
+                helperUtil
+                  .timestampToDateConverter(transaction.date)
+                  .getTime() <= new Date(budget.endDate).getTime()
+            )
+            .reduce((total, transaction) => +total + +transaction.amount, 0);
+          const percentageSpent = Math.floor(
+            (expenseCosts / expense.amount) * 100
+          );
+
+          return {
+            ...expense,
+            totalSpent: expenseCosts,
+            percentageSpent,
+          };
+        })
+        .sort((a, b) => b.totalSpent - a.totalSpent) || [];
+
+    return { ...budget, expenses };
+  }, [budgets]);
 
   const balances = useMemo(() => {
     const total = accounts.reduce((sum: number, account: Account) => {
@@ -250,9 +279,9 @@ const DashboardPage: NextPageWithLayout = () => {
                   <>
                     <div
                       className="flex items-center space-x-2 group cursor-pointer"
-                      onClick={() =>
-                        showModal(<BudgetModal budget={currentBudget} />)
-                      }
+                      // onClick={() =>
+                      //   showModal(<BudgetModal budget={currentBudget} />)
+                      // }
                     >
                       <h3 className="transition-all">
                         {currentBudget.title} Budget
@@ -262,21 +291,11 @@ const DashboardPage: NextPageWithLayout = () => {
                         icon="solar:circle-top-up-linear"
                       />
                     </div>
-                    <div className="space-y-4 max-h-[680px] overflow-auto">
-                      {currentBudget.expenses.map((budgetItem: IBudgetItem) => {
-                        const categoryTransactions =
-                          transactions.expenses.filter(
-                            (transaction: Transaction) =>
-                              transaction.category == budgetItem.category
-                          );
-                        const transactionCosts = categoryTransactions.reduce(
-                          (total, transaction) => +total + +transaction.amount,
-                          0
-                        );
-                        const percentageSpent = Math.floor(
-                          (transactionCosts / budgetItem.amount) * 100
-                        );
+                    <div className="space-y-5 max-h-[680px] overflow-auto">
+                      {currentBudget.expenses.map((budgetItem: any) => {
+                        const { totalSpent, percentageSpent } = budgetItem;
                         const category = getCategory(budgetItem.category);
+                        const maxPercentage = 99;
 
                         return (
                           <React.Fragment key={budgetItem.category}>
@@ -284,46 +303,43 @@ const DashboardPage: NextPageWithLayout = () => {
                               title={`${percentageSpent}% of ${category?.name} allocation spent`}
                               className="flex flex-col w-full space-y-2"
                             >
-                              <p>{category?.name}</p>
-                              <div className="flex space-x-2">
-                                <div className="relative bg-background flex items-center pr-2 h-8 w-full overflow-hidden">
+                              <p className="text-sm">{category?.name}</p>
+                              <div className="space-y-1">
+                                <div className="flex items-center justify-between">
+                                  <p className="text-lg font-header font-medium">
+                                    {helperUtil.currencyConverter(totalSpent)}
+                                    {" / "}
+                                    <span className="text-xs text-text font-normal">
+                                      {helperUtil.currencyConverter(
+                                        budgetItem.amount
+                                      )}
+                                    </span>
+                                  </p>
+                                  <p
+                                    className={`text-base ${
+                                      percentageSpent >= maxPercentage
+                                        ? "text-error"
+                                        : "text-primary"
+                                    }`}
+                                  >
+                                    {percentageSpent}%
+                                  </p>
+                                </div>
+                                <div className="relative bg-background flex items-center pr-2 h-1.5 w-full overflow-hidden">
                                   <div
-                                    className="absolute h-full flex items-center justify-end pr-1"
+                                    className={`absolute h-full flex items-center justify-end pr-1 ${
+                                      percentageSpent >= maxPercentage
+                                        ? "bg-error"
+                                        : "bg-primary"
+                                    }`}
                                     style={{
                                       width: `${
                                         percentageSpent >= 100
                                           ? 100
                                           : percentageSpent
                                       }%`,
-                                      backgroundColor:
-                                        percentageSpent >= 100
-                                          ? "#A50000"
-                                          : "#29A9CE",
                                     }}
-                                  >
-                                    {percentageSpent >= 70 && (
-                                      <p className="text-xs pl-2 mr-auto">
-                                        {helperUtil.currencyConverter(
-                                          budgetItem.amount
-                                        )}
-                                      </p>
-                                    )}
-                                    <p className="text-xs flex items-center">
-                                      {helperUtil.currencyConverter(
-                                        transactionCosts
-                                      )}{" "}
-                                      <span className="text-[10px] ml-0.5">
-                                        [{percentageSpent}%]
-                                      </span>
-                                    </p>
-                                  </div>
-                                  {percentageSpent < 70 && (
-                                    <p className=" ml-auto text-xs">
-                                      {helperUtil.currencyConverter(
-                                        budgetItem.amount
-                                      )}
-                                    </p>
-                                  )}
+                                  ></div>
                                 </div>
                               </div>
                             </div>

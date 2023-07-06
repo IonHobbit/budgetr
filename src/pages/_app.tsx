@@ -21,8 +21,7 @@ import BaseLayout from "@/layouts/BaseLayout";
 import ModalManager from "@/components/ModalManager";
 
 import "@/styles/globals.css";
-import { outfit } from "@/utils/font.util";
-import { inter } from "@/utils/font.util";
+import { outfit, inter } from "@/utils/font.util";
 import "react-toastify/dist/ReactToastify.css";
 import AuthGuard from "@/guards/auth.guard";
 import { PersistGate } from "redux-persist/integration/react";
@@ -55,8 +54,8 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       <style jsx global>
         {`
           :root {
-            --outfit-font: ${outfit.style.fontFamily};
-            --inter-font: ${inter.style.fontFamily};
+            --outfit-font: ${inter.style.fontFamily};
+            --inter-font: ${outfit.style.fontFamily};
           }
         `}
       </style>
