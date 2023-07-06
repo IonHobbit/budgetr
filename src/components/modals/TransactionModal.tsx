@@ -320,12 +320,12 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ transaction }) => {
           <>
             <div className="space-y-2">
               <p className="text-sm">Select an account</p>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 overflow-auto w-full">
                 {accounts.map((_account: Account) => {
                   return (
                     <div
                       key={_account.id}
-                      className={`w-20 h-20 relative cursor-pointer border-2 ${
+                      className={`w-20 h-20 relative cursor-pointer border-2 flex-shrink-0 ${
                         account?.id == _account.id && "border-primary"
                       }`}
                       onClick={() => setAccount(_account)}
@@ -345,14 +345,14 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ transaction }) => {
             {transactionForm.values.type === TransactionType.TRANSFER && (
               <div className="w-full flex flex-col items-center space-y-6">
                 <Icon icon="bi:arrow-down" />
-                <div className="flex items-center w-full space-x-4">
+                <div className="flex items-center w-full space-x-4 overflow-auto">
                   {accounts
                     .filter((_account: Account) => _account.id !== account?.id)
                     .map((_account: Account) => {
                       return (
                         <div
                           key={_account.id}
-                          className={`w-20 h-20 relative cursor-pointer border-2 ${
+                          className={`w-20 h-20 relative cursor-pointer border-2 flex-shrink-0 ${
                             receivingAccount?.id == _account.id &&
                             "border-primary"
                           }`}
@@ -373,6 +373,14 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ transaction }) => {
             )}
           </>
         )}
+        <Select
+          title="Category"
+          name="category"
+          required={true}
+          variation="secondary"
+          options={categoryOptions}
+          form={transactionForm}
+        />
         <Input
           title={`How much ₦ did you 
           ${transactionForm.values.type == TransactionType.INCOME ? "get?" : ""}
@@ -423,14 +431,6 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ transaction }) => {
           max={helperUtil.dateFormatter(new Date())}
           required={true}
           variation="secondary"
-          form={transactionForm}
-        />
-        <Select
-          title="Category"
-          name="category"
-          required={true}
-          variation="secondary"
-          options={categoryOptions}
           form={transactionForm}
         />
         <div className="flex items-center space-x-4 justify-between">

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { NextPageWithLayout } from "./_app";
 import { RootState } from "@/store/rootReducer";
@@ -74,17 +74,18 @@ const TransactionsPage: NextPageWithLayout = () => {
             <div className="flex items-center space-x-4">
               {TRANSACTION_TYPES.map((type: TransactionType) => {
                 return (
-                  <div
-                    key={type}
-                    onClick={() => setSelectedType(type)}
-                    className={`px-4 py-2 rounded  capitalize cursor-pointer hover:bg-primary hover:text-white ${
-                      selectedType == type
-                        ? "bg-primary text-white"
-                        : "bg-secondary text-text"
-                    }`}
-                  >
-                    {type}
-                  </div>
+                  <React.Fragment key={type}>
+                    <div
+                      onClick={() => setSelectedType(type)}
+                      className={`px-4 py-2 rounded  capitalize cursor-pointer hover:bg-primary hover:text-white ${
+                        selectedType == type
+                          ? "bg-primary text-white"
+                          : "bg-secondary text-text"
+                      }`}
+                    >
+                      {type}
+                    </div>
+                  </React.Fragment>
                 );
               })}
             </div>

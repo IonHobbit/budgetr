@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import { Transaction } from "./transaction";
 
 export interface IBank {
@@ -25,6 +26,7 @@ export interface IAccount {
   income: Array<Transaction>;
   transfers: Array<Transaction>;
   totals: ITotals;
+  timestamp: Timestamp;
 }
 export interface IAccountWithoutTransactions {
   id: string;
@@ -45,6 +47,7 @@ export class Account implements IAccount {
   public income: Array<Transaction>
   public transfers: Array<Transaction>
   public totals: ITotals
+  public timestamp: Timestamp
 
   constructor(account: IAccount) {
     this.id = account.id;
@@ -57,5 +60,6 @@ export class Account implements IAccount {
     this.income = account.income;
     this.transfers = account.transfers;
     this.totals = account.totals;
+    this.timestamp = account.timestamp;
   }
 }
