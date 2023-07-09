@@ -76,12 +76,19 @@ const Navigation: React.FC<NavigationProps> = ({ mobile, routes }) => {
           </div>
         </>
       )}
-      <div
-        className="absolute bottom-5 w-full items-center font-header text-white rounded transition-all bg-primary p-4 py-3 space-x-3 cursor-pointer mobile-hidden lg:!flex"
-        onClick={() => showModal(<IssueModal />)}
-      >
-        <Icon icon="solar:chat-line-bold-duotone" width={20} />
-        <p>Give Feedback</p>
+      <div className="absolute bottom-5 w-full mobile-hidden text-center space-y-3">
+        <div
+          onClick={() => showModal(<IssueModal />)}
+          className="items-center font-header text-white rounded transition-all bg-primary p-4 py-3 space-x-3 cursor-pointer lg:!flex"
+        >
+          <Icon icon="solar:chat-line-bold-duotone" width={20} />
+          <p>Give Feedback</p>
+        </div>
+        <div>
+          <Link href="/ehen" className="text-sm text-primary">
+            What is this?
+          </Link>
+        </div>
       </div>
     </div>
   );

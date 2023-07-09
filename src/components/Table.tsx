@@ -104,7 +104,7 @@ const Table = ({
                             {helperUtil.readableDateFormatter(row["endDate"])}
                           </>
                         ),
-                        category: <>{getCategory(row["category"])?.name}</>,
+                        category: <>{getCategory(row["category"])?.name || "---"}</>,
                         type: <div className="capitalize">{row[header]}</div>,
                         account: (
                           <div

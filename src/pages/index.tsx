@@ -71,7 +71,7 @@ const DashboardPage: NextPageWithLayout = () => {
     let hours = myDate.getHours();
     let greet;
 
-    if (hours < 12) greet = "Go back to sleep bro!";
+    if (hours < 12) greet = "Go back to sleep";
     else if (hours >= 12 && hours <= 17) greet = "Sup";
     else if (hours >= 17 && hours <= 24) greet = "Yo!";
 
@@ -279,9 +279,9 @@ const DashboardPage: NextPageWithLayout = () => {
                   <>
                     <div
                       className="flex items-center space-x-2 group cursor-pointer"
-                      // onClick={() =>
-                      //   showModal(<BudgetModal budget={currentBudget} />)
-                      // }
+                      onClick={() =>
+                        showModal(<BudgetModal budget={currentBudget as Budget} />)
+                      }
                     >
                       <h3 className="transition-all">
                         {currentBudget.title} Budget
