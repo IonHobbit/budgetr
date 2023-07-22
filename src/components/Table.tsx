@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 type TableProps = {
   data: any[];
   exclude?: string[];
+  arrange?: string[];
   className?: string;
   emptyMessage?: string;
   onClick?: (data: any) => void;
@@ -14,17 +15,19 @@ type TableProps = {
 const Table = ({
   data,
   exclude,
+  arrange,
   className,
   emptyMessage,
   onClick,
 }: TableProps) => {
   const excludedHeaders = exclude || [];
+  const arrangedHeaders = arrange || [];
   const headers =
-    data.length > 0
+    data.length > 0 && arrangedHeaders.length == 0
       ? Object.keys(data[0]).filter(
           (header) => !excludedHeaders.includes(header)
         )
-      : [];
+      : arrangedHeaders;
 
   const { getCategory, getAccount } = useMeta();
 
@@ -94,6 +97,16 @@ const Table = ({
                               )}
                           </>
                         ),
+                        timestamp: (
+                          <>
+                            {header == "timestamp" &&
+                              helperUtil.readableDateFormatter(
+                                helperUtil
+                                  .timestampToDateConverter(row[header])
+                                  .toDateString()
+                              )}
+                          </>
+                        ),
                         startDate: (
                           <>
                             {helperUtil.readableDateFormatter(row["startDate"])}
@@ -104,7 +117,9 @@ const Table = ({
                             {helperUtil.readableDateFormatter(row["endDate"])}
                           </>
                         ),
-                        category: <>{getCategory(row["category"])?.name || "---"}</>,
+                        category: (
+                          <>{getCategory(row["category"])?.name || "---"}</>
+                        ),
                         type: <div className="capitalize">{row[header]}</div>,
                         account: (
                           <div

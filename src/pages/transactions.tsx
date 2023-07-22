@@ -127,13 +127,15 @@ const TransactionsPage: NextPageWithLayout = () => {
                 <Table
                   className="overflow-hidden"
                   data={transactions}
-                  exclude={[
-                    "id",
-                    "type",
-                    "timestamp",
+                  arrange={[
+                    "date",
+                    "amount",
+                    "category",
+                    "description",
+                    "account",
                     selectedType == TransactionType.TRANSFER
-                      ? ""
-                      : "receivingAccount",
+                      ? "receivingAccount"
+                      : "",
                   ]}
                   emptyMessage="No transactions found"
                   onClick={(transaction: Transaction) =>
@@ -155,6 +157,6 @@ const TransactionsPage: NextPageWithLayout = () => {
   );
 };
 
-useLayout(DashboardLayout, TransactionsPage, "Accounts");
+useLayout(DashboardLayout, TransactionsPage, "Transactions");
 
 export default TransactionsPage;
