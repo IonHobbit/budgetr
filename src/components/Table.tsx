@@ -54,22 +54,19 @@ const Table = ({
             {data.map((row, index) => (
               <React.Fragment key={index}>
                 <tr
-                  className={onClick && "cursor-pointer"}
+                  className={onClick && "cursor-pointer hover:bg-background"}
                   onClick={() => {
                     if (onClick) onClick(row);
                   }}
                 >
                   {headers.map((header) => (
-                    <td
-                      key={header}
-                      className="px-6 py-4 whitespace-nowrap text-sm"
-                    >
+                    <td key={header} className="px-6 py-4 text-sm">
                       {{
                         amount: (
-                          <>
+                          <span className="whitespace-nowrap">
                             {header == "amount" &&
                               helperUtil.currencyConverter(row["amount"])}
-                          </>
+                          </span>
                         ),
                         projectedIncome: (
                           <>
@@ -88,14 +85,14 @@ const Table = ({
                           </>
                         ),
                         date: (
-                          <>
+                          <span className="whitespace-nowrap">
                             {header == "date" &&
                               helperUtil.readableDateFormatter(
                                 helperUtil
                                   .timestampToDateConverter(row[header])
                                   .toDateString()
                               )}
-                          </>
+                          </span>
                         ),
                         timestamp: (
                           <>
@@ -118,7 +115,9 @@ const Table = ({
                           </>
                         ),
                         category: (
-                          <>{getCategory(row["category"])?.name || "---"}</>
+                          <span className="whitespace-nowrap">
+                            {getCategory(row["category"])?.name || "---"}
+                          </span>
                         ),
                         type: <div className="capitalize">{row[header]}</div>,
                         account: (
