@@ -4,6 +4,7 @@ export type Route = {
   icon: string;
   altIcon?: string;
   description?: string;
+  custodianOnly?: boolean;
 };
 
 const routes: Route[] = [
@@ -27,6 +28,14 @@ const routes: Route[] = [
     name: "Budgets",
     icon: "tabler:currency-naira",
   },
+  {
+    url: "/root",
+    name: "Root",
+    icon: "solar:tornado-small-bold-duotone",
+    custodianOnly: true
+  },
 ];
+
+export const civilianRoutes = routes.filter((route) => !route.custodianOnly)
 
 export default routes;

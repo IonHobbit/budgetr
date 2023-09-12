@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { ReactNode, useEffect, useMemo } from "react";
 
 import { RootState } from "@/store/rootReducer";
-import { selectUser } from "@/store/slices/userSlice";
+import { selectUser, subscribeToUser } from "@/store/slices/userSlice";
 import { fetchBudgets } from "@/store/slices/budgetsSlice";
 import { fetchAccounts } from "@/store/slices/accountsSlice";
 import { fetchCategories } from "@/store/slices/categoriesSlice";
@@ -17,7 +17,8 @@ import Navigation from "@/components/Navigation";
 import { useModal } from "@/components/ModalManager";
 import TransactionModal from "@/components/modals/TransactionModal";
 
-import routes from "@/constants/routes";
+import routes, { civilianRoutes } from "@/constants/routes";
+import { UserRole } from "@/models/user";
 
 export interface LayoutProps {
   children: ReactNode;
@@ -34,8 +35,17 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children, pageName }) => {
   const { showModal } = useModal();
   const { isOffline } = useNetwork();
 
+  const accessibleRoutes = useMemo(() => {
+    if (user?.role == UserRole.CUSTODIAN) {
+      return routes;
+    } else {
+      return civilianRoutes;
+    }
+  }, [user]);
+
   useEffect(() => {
     if (user) {
+      dispatcher(subscribeToUser());
       dispatcher(fetchBudgets(user!.id));
       dispatcher(fetchAccounts(user!.id));
       dispatcher(fetchCategories(user!.id));
@@ -74,7 +84,7 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children, pageName }) => {
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 h-full w-full">
             <aside className="lg:col-span-2 px-4 space-y-6 mobile-hidden bg-secondary">
-              <Navigation routes={routes} />
+              <Navigation routes={accessibleRoutes} />
             </aside>
             <div className="lg:col-span-10 h-[92vh] lg:h-screen">
               <Header />
@@ -85,7 +95,7 @@ const DashboardLayout: React.FC<LayoutProps> = ({ children, pageName }) => {
           </div>
         </div>
         <div className="desktop-hidden fixed bottom-3 left-1/2 -translate-x-1/2 bg-white rounded-lg w-[90%] max-w-sm mx-auto flex items-center px-4 py-2">
-          <Navigation routes={routes} mobile={true} />
+          <Navigation routes={accessibleRoutes} mobile={true} />
         </div>
       </main>
     </>

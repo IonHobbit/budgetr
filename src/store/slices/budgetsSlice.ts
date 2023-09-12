@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../rootReducer';
-import { fetchFirestoreData } from '@/utils/firebase.util';
+import { fetchFirestoreData, subscribeToFirestoreCollection } from '@/utils/firebase.util';
 import { resetAll } from '../rootAction';
 import { Budget, IBudget } from '@/models/budget';
+import getStoredState from 'redux-persist/es/getStoredState';
 
 interface BudgetsSliceState {
   data: Budget[];
@@ -28,6 +29,18 @@ export const BudgetsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(subscribeToBudgets.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(subscribeToBudgets.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(subscribeToBudgets.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Error fetching budgets data';
+      })
       .addCase(fetchBudgets.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -46,9 +59,21 @@ export const BudgetsSlice = createSlice({
 });
 
 export const fetchBudgets = createAsyncThunk(
-  'budgets/fetchBudgets',
+  'Budgets/fetchBudgets',
   (userID: string) => {
     return fetchFirestoreData(`Users/${userID}/Budgets`)
+  }
+)
+
+export const subscribeToBudgets = createAsyncThunk(
+  'Budgets/subscribe',
+  (_, thunkAPI) => {
+    try {
+      const { user: { data } } = thunkAPI.getState() as RootState;
+      return subscribeToFirestoreCollection(`Users/${data?.id}/Budgets`, thunkAPI.dispatch, setBudgets)
+    } catch (error) {
+      thunkAPI.rejectWithValue(error)
+    }
   }
 )
 

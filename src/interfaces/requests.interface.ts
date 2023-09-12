@@ -81,5 +81,10 @@ export interface CreateIssueRequest {
   title: string;
   body: string;
   labels: Array<string>;
+}
 
+export interface CreateNotificationRequest {
+  subject: string;
+  message: string;
+  read?: boolean;
 }

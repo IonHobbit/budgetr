@@ -15,6 +15,8 @@ export enum DirectoryPath {
   userProfileImages = 'CRM/Users/ProfileImages',
 }
 
+export const generateCollectionReference = (collectionPath: string) => collection(firestore, collectionPath)
+
 export const loginWithGooglePopup = async (): Promise<FirebaseUser | void> => {
   try {
     const response = await signInWithPopup(auth, googleProvider)
@@ -99,24 +101,26 @@ export const fetchFirestoreDocument = async <T>(documentPath: string): Promise<T
   }
 }
 
-export const subscribeToFirestoreCollection = (collectionName: string, dispatcher: Dispatch, dataSetter: (data: any) => AnyAction, callback?: () => void) => {
+export const subscribeToFirestoreCollection = (collectionName: string, dispatcher?: Dispatch, dataSetter?: (data: any) => AnyAction, callback?: (data?: any) => void) => {
   const collectionReference = collection(firestore, collectionName);
   return onSnapshot(collectionReference, (snapshot) => {
     const data = snapshot.docs
       .filter((doc) => doc.exists())
       .map((doc) => ({ ...doc.data(), id: doc.id }))
-    dispatcher(dataSetter(data))
-    if (callback) callback()
+    if (dispatcher && dataSetter) dispatcher(dataSetter(data))
+    if (callback) callback(data)
+    return data
   })
 }
 
-export const subscribeToFirestoreDocument = (collectionName: string, dispatcher: Dispatch, dataSetter: (data: any) => AnyAction, callback?: () => void) => {
+export const subscribeToFirestoreDocument = (collectionName: string, dispatcher?: Dispatch, dataSetter?: (data: any) => AnyAction, callback?: () => void) => {
   const documentReference = doc(firestore, collectionName);
   return onSnapshot(documentReference, (doc) => {
     if (doc.exists()) {
       const data = { ...doc.data(), id: doc.id }
-      dispatcher(dataSetter(data))
-      if (callback) callback()
+      if (dispatcher && dataSetter) dispatcher(dataSetter(data))
+      if (callback) return callback()
+      return data
     }
   })
 }

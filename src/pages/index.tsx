@@ -99,14 +99,7 @@ const DashboardPage: NextPageWithLayout = () => {
     return tasks.filter((task) => {
       return !completedTasks[task.name];
     });
-  }, [
-    categories,
-    accounts,
-    budgets,
-    budgetsLoader,
-    categoriesLoader,
-    accountsLoader,
-  ]);
+  }, []);
 
   const transactions = useMemo(() => {
     const allTransactions = accounts.reduce(
@@ -139,8 +132,8 @@ const DashboardPage: NextPageWithLayout = () => {
     const transfers = allTransactions.filter(
       (transaction: Transaction) =>
         transaction.type === TransactionType.TRANSFER
-    );
-
+    );    
+    
     return { expenses, income, transfers, latest };
   }, [accounts]);
 
@@ -178,11 +171,19 @@ const DashboardPage: NextPageWithLayout = () => {
             ...expense,
             totalSpent: expenseCosts,
             percentageSpent,
+            categoryDetails: getCategory(expense.category),
           };
         })
         .sort((a, b) => b.totalSpent - a.totalSpent) || [];
 
-    return { ...budget, expenses };
+    const totalSpent = expenses.reduce(
+      (sum, expense) => sum + expense.totalSpent,
+      0
+    );
+
+    const highestSpendCategory = expenses[0];
+
+    return { ...budget, expenses, totalSpent, highestSpendCategory };
   }, [budgets]);
 
   const balances = useMemo(() => {
@@ -280,7 +281,9 @@ const DashboardPage: NextPageWithLayout = () => {
                     <div
                       className="flex items-center space-x-2 group cursor-pointer"
                       onClick={() =>
-                        showModal(<BudgetModal budget={currentBudget as Budget} />)
+                        showModal(
+                          <BudgetModal budget={currentBudget as Budget} />
+                        )
                       }
                     >
                       <h3 className="transition-all">
@@ -291,10 +294,41 @@ const DashboardPage: NextPageWithLayout = () => {
                         icon="solar:circle-top-up-linear"
                       />
                     </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-4 bg-background rounded flex flex-col justify-end">
+                        <h3 className="truncate">
+                          {helperUtil.currencyConverter(
+                            currentBudget.totalSpent
+                          )}
+                        </h3>
+                        <p className="text-xs">Total Expense</p>
+                      </div>
+                      <div className="p-4 bg-background rounded">
+                        <p className="text-xs truncate">
+                          {
+                            currentBudget.highestSpendCategory?.categoryDetails
+                              ?.name
+                          }
+                        </p>
+                        <h4 className="truncate">
+                          {helperUtil.currencyConverter(
+                            currentBudget.highestSpendCategory?.totalSpent
+                          )}
+                        </h4>
+                        <p className="text-xs truncate">
+                          {Math.floor(
+                            (currentBudget.highestSpendCategory?.totalSpent /
+                              currentBudget.totalSpent) *
+                              100
+                          )}
+                          % of total expenses
+                        </p>
+                      </div>
+                    </div>
                     <div className="space-y-5 max-h-[680px] overflow-auto">
                       {currentBudget.expenses.map((budgetItem: any) => {
                         const { totalSpent, percentageSpent } = budgetItem;
-                        const category = getCategory(budgetItem.category);
+                        const category = budgetItem.categoryDetails;
                         const maxPercentage = 99;
 
                         return (
@@ -315,11 +349,12 @@ const DashboardPage: NextPageWithLayout = () => {
                                       )}
                                     </span>
                                   </p>
+
                                   <p
-                                    className={`text-base ${
+                                    className={`text-sm px-2 py-0.5 rounded ${
                                       percentageSpent >= maxPercentage
-                                        ? "text-error"
-                                        : "text-primary"
+                                        ? "text-error bg-error bg-opacity-20"
+                                        : "text-primary bg-primary bg-opacity-20"
                                     }`}
                                   >
                                     {percentageSpent}%

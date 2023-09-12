@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Button from "./Button";
+import { Icon } from "@iconify/react";
 
 type EmptyStateProps = {
   message: string;
@@ -18,12 +19,13 @@ const EmptyState = ({
     <div className="h-full min-h-[400px] grid place-items-center">
       <div className="flex flex-col items-center space-y-6 max-w-[250px] w-full">
         <div className="w-40 h-40 relative">
-          <Image
+          {/* <Icon className="animate-[spin_3s_linear_infinite] w-full h-full" icon="solar:black-hole-line-duotone" /> */}
+          {/* <Image
             src={image ? image : "/illustrations/whirl.svg"}
             fill
             sizes="100%"
             alt="Empty state image"
-          />
+          /> */}
         </div>
         <p className="text-center">{message}</p>
         {actionText && <Button onClick={onClick}>{actionText}</Button>}

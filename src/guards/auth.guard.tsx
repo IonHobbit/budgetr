@@ -1,4 +1,7 @@
+import { Loader } from "@/components/Loader";
 import useAuth from "@/hooks/useAuth";
+import BaseLayout from "@/layouts/BaseLayout";
+import { User, UserRole } from "@/models/user";
 import { logout } from "@/store/slices/userSlice";
 import storageUtil, { StorageKey } from "@/utils/storage.util";
 import { useRouter } from "next/router";
@@ -10,15 +13,16 @@ interface GuardProps {
 }
 
 const AuthGuard: FC<GuardProps> = ({ children }) => {
-  const user = storageUtil.getItem(StorageKey.user);
+  const user = storageUtil.getItem<User>(StorageKey.user);
   const passKey = storageUtil.getItem<string>(StorageKey.passKey);
 
   const router = useRouter();
   const dispatch = useDispatch();
   const [isAuthenticated, setAuthentication] = useState(false);
 
-  const publicPaths = ["auth"];
-  const betaAccessiblePaths = ["login"];
+  const publicRoutes = ["auth"];
+  const custodianRoutes = ["root"];
+  const betaAccessibleRoutes = ["login"];
 
   const { authorize } = useAuth();
 
@@ -27,20 +31,28 @@ const AuthGuard: FC<GuardProps> = ({ children }) => {
 
     let access = !!passKey ? authorize(passKey) : false;
     let authenticated = !!user;
+    let authorized = true;
 
-    if (publicPaths.includes(path)) {
+    if (publicRoutes.includes(path)) {
       access = true;
       authenticated = true;
     } else {
       // Check if user should be on the site at all
       if (access) {
         // Check if user is on any unauthenticated pages
-        if (betaAccessiblePaths.includes(path)) {
+        if (betaAccessibleRoutes.includes(path)) {
           authenticated = true;
         } else {
           // Check if user is logged in
           if (!authenticated) {
             dispatch<any>(logout(router));
+          }
+
+          if (
+            user?.role !== UserRole.CUSTODIAN &&
+            custodianRoutes.includes(path)
+          ) {
+            authorized = false;
           }
         }
       } else {
@@ -48,10 +60,16 @@ const AuthGuard: FC<GuardProps> = ({ children }) => {
       }
     }
 
-    setAuthentication(access && authenticated);
+    setAuthentication(access && authenticated && authorized);
   }, [router.asPath]);
 
-  return isAuthenticated ? <>{children}</> : null;
+  return isAuthenticated ? (
+    <>{children}</>
+  ) : (
+    <BaseLayout>
+      <Loader fullScreen={true} />
+    </BaseLayout>
+  );
 };
 
 export default AuthGuard;
