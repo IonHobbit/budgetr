@@ -25,7 +25,7 @@ const monthFormatter = (date: Date) => {
 }
 
 const timestampToDateConverter = (date: Timestamp) => {
-  const timestamp = new Timestamp(date.seconds, date.nanoseconds);
+  const timestamp = new Timestamp(date?.seconds, date?.nanoseconds);
   return timestamp.toDate();
 }
 

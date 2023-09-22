@@ -121,7 +121,7 @@ const DashboardPage: NextPageWithLayout = () => {
           helperUtil.timestampToDateConverter(b.timestamp).getTime() -
           helperUtil.timestampToDateConverter(a.timestamp).getTime()
       )
-      .slice(0, 10);
+      .slice(0, 12);
 
     const expenses = allTransactions.filter(
       (transaction: Transaction) => transaction.type === TransactionType.EXPENSE
@@ -141,7 +141,7 @@ const DashboardPage: NextPageWithLayout = () => {
     const currentTime =
       new Date(new Date().toDateString()).getTime() + 1000 * 60 * 60;
 
-    const budget = budgets.find((budget: Budget) => {
+    const budget = budgets?.find((budget: Budget) => {
       return (
         new Date(budget.startDate).getTime() <= currentTime &&
         new Date(budget.endDate).getTime() > currentTime

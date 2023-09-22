@@ -75,12 +75,11 @@ const Input = (props: InputProps) => {
     <>
       <div className={`flex flex-col w-full ${className}`}>
         {title && (
-          <p className="font-normal text-sm whitespace-nowrap">{title}</p>
+          <p className="font-normal text-sm whitespace-nowrap mb-1.5">{title}</p>
         )}
         <div
-          className={`${variation == "primary" ? "primaryWrapper" : ""} ${
-            name && form.errors[name] && form.touched[name] && "errored"
-          }`}
+          className={`${variation == "primary" ? "primaryWrapper" : ""} ${name && form.errors[name] && form.touched[name] && "errored"
+            }`}
         >
           {form && name && (
             <>
@@ -121,25 +120,25 @@ const Input = (props: InputProps) => {
                   ></textarea>
                 ),
               }[type] || (
-                <input
-                  id={name}
-                  min={min}
-                  max={max}
-                  step={step}
-                  type={type}
-                  name={name}
-                  className={variation == "primary" ? "primary" : "secondary"}
-                  placeholder={placeholder}
-                  disabled={disabled}
-                  value={form.values[name]}
-                  onChange={form.handleChange}
-                  onKeyDown={(e) => {
-                    if (e.key == "Enter") {
-                      form.handleSubmit();
-                    }
-                  }}
-                />
-              )}
+                  <input
+                    id={name}
+                    min={min}
+                    max={max}
+                    step={step}
+                    type={type}
+                    name={name}
+                    className={variation == "primary" ? "primary" : "secondary"}
+                    placeholder={placeholder}
+                    disabled={disabled}
+                    value={form.values[name]}
+                    onChange={form.handleChange}
+                    onKeyDown={(e) => {
+                      if (e.key == "Enter") {
+                        form.handleSubmit();
+                      }
+                    }}
+                  />
+                )}
             </>
           )}
           {value !== undefined && (
@@ -176,25 +175,26 @@ const Input = (props: InputProps) => {
                   ></textarea>
                 ),
               }[type] || (
-                <input
-                  min={min}
-                  max={max}
-                  step={step}
-                  value={value}
-                  required={required}
-                  disabled={disabled}
-                  placeholder={placeholder}
-                  className={variation == "primary" ? "primary" : "secondary"}
-                  onKeyDown={(e) => {
-                    if (e.key == "Enter" && onEnter) {
-                      onEnter();
-                    }
-                  }}
-                  onChange={(e) => {
-                    if (onChange) onChange(e.target.value);
-                  }}
-                />
-              )}
+                  <input
+                    min={min}
+                    max={max}
+                    step={step}
+                    type={type}
+                    value={value}
+                    required={required}
+                    disabled={disabled}
+                    placeholder={placeholder}
+                    className={variation == "primary" ? "primary" : "secondary"}
+                    onKeyDown={(e) => {
+                      if (e.key == "Enter" && onEnter) {
+                        onEnter();
+                      }
+                    }}
+                    onChange={(e) => {
+                      if (onChange) onChange(e.target.value);
+                    }}
+                  />
+                )}
             </>
           )}
         </div>
